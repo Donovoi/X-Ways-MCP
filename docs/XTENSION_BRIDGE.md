@@ -5,6 +5,7 @@ and before UI automation.
 
 ## Decision Rule
 
+0. Check the newest available official manual/docs or approved local docs cache.
 1. Search local X-Ways manual/docs for command-line, script, `.dlg`, `Cfg:`,
    `XT:`, and `XTParam:*` support.
 2. If the task needs in-process access and the X-Tensions API can cover it,

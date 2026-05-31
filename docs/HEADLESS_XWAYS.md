@@ -11,6 +11,8 @@ publishing the manual or exposing case data.
 - Public documentation refreshes should be limited to official X-Ways URLs.
 - Manual search results are small snippets for command syntax lookup, not a
   republished copy of the manual.
+- Manual first: before deciding how to use X-Ways or a supporting program,
+  check the newest available official manual/docs or approved local docs cache.
 - Prefer headless X-Ways operations before any Windows UI automation.
 - If X-Ways has documented or locally researched API coverage for a task that
   cannot be done headlessly, generate an X-Tension bridge and document it for
@@ -20,6 +22,7 @@ publishing the manual or exposing case data.
 
 Use this order:
 
+0. Current manual or official/local docs check.
 1. Command line, scripts, `Dlg:`, `Cfg:`, `XT:`, `XTParam:*`, and saved X-Ways
    settings.
 2. Native distributed RVS for different evidence objects in the same case when

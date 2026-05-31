@@ -17,6 +17,10 @@ Reports whether a local offline manual index exists and lists local
 `manual.pdf` candidates. With `check_online=true`, it checks public X-Ways
 manual headers without sending any case data.
 
+Manual-first policy: use this and `search_xways_manual` or
+`headless_xways_reference` before deciding X-Ways command syntax, API behavior,
+distributed processing, X-Tension work, or UI fallback.
+
 ## cache_xways_manual
 
 Copies or downloads the X-Ways manual into a gitignored local cache and builds a

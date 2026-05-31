@@ -47,6 +47,9 @@ agent is still planning.
 
 Automation preference is:
 
+0. Manual first: check the newest available X-Ways manual, official docs, or
+   approved local docs cache before deciding command syntax, API behavior,
+   distributed processing, X-Tension work, or UI fallback.
 1. X-Ways command-line, scripts, saved dialog selections, `Cfg:`, `XT:`, and
    `XTParam:*`.
 2. X-Ways native distributed RVS for different evidence objects in the same case
@@ -168,6 +171,8 @@ See [docs/FORENSIC_COPILOT.md](docs/FORENSIC_COPILOT.md) for integration with
 `Donovoi/forensic-copilot`.
 See [docs/TEST_ENVIRONMENTS.md](docs/TEST_ENVIRONMENTS.md) for disposable
 synthetic fixture testing.
+See [docs/MANUAL_FIRST.md](docs/MANUAL_FIRST.md) for the manual-first tooling
+policy.
 See [docs/HEADLESS_XWAYS.md](docs/HEADLESS_XWAYS.md) for local manual indexing
 and headless command lookup.
 See [docs/PARALLEL_PROCESSING.md](docs/PARALLEL_PROCESSING.md) for the

@@ -163,7 +163,9 @@ def test_plan_xways_operation_prefers_headless():
     result = plan_xways_operation("Run command line script with XTParam values")
 
     assert result["selected_route"] == "headless_command_or_script"
-    assert result["preference_order"][0] == "headless_command_or_script"
+    assert result["preference_order"][0] == "manual_or_official_docs_first"
+    assert result["preference_order"][1] == "headless_command_or_script"
+    assert "manual_first_policy" in result
     assert "xtparam" in result["detected_headless_terms"]
 
 
@@ -192,7 +194,8 @@ def test_create_xtension_scaffold(tmp_path: Path):
     assert (root / "src" / "metadata_bridge.cpp").exists()
 
     manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
-    assert manifest["execution_policy"][0] == "headless_command_or_script"
+    assert manifest["execution_policy"][0] == "manual_or_official_docs_first"
+    assert manifest["execution_policy"][1] == "headless_command_or_script"
     assert "XT_Init" in manifest["documented_symbols"]
 
     duplicate = create_xtension_scaffold("metadata bridge", output_root=str(tmp_path))
