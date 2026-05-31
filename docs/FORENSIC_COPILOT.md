@@ -11,7 +11,7 @@ Use this shape:
 Forensic Examiner / helper agents
   -> xways-harness
   -> xways-mcp MCP tools and core utilities
-  -> X-Ways, XWFIM, scripts, and future X-Tension bridge
+  -> X-Ways, XWFIM, scripts, and generated X-Tension bridges
 ```
 
 `forensic-copilot` keeps authority, scope, evidence handling, peer review, and
@@ -31,6 +31,8 @@ The harness follows these `forensic-copilot` expectations:
 - broad outputs written to files, with terminal output limited to paths/counts
 - no plaintext secret dumping
 - launch/execution remains gated separately from inventory and validation
+- X-Ways automation prefers headless commands/scripts first, generated
+  X-Tensions second, and UI automation last
 
 ## OpenCode Flow
 
@@ -45,6 +47,8 @@ FLOW:
 - Preflight XWFIM: python -m xways_mcp.harness xwfim-preflight --case-name CASE-001 --xwfim-root <XWFIM_ROOT> --staging-root artifacts --output-root reports --evidence-os Windows --evidence-mode portable-tooling
 - Folder triage: python -m xways_mcp.harness folder-triage --case-name CASE-001 --input-root <APPROVED_INPUT_ROOT> --staging-root artifacts --output-root reports --depth triage
 - Manual lookup: use `manual_status`, `cache_xways_manual`, and `headless_xways_reference` to retrieve X-Ways command-line/script syntax from the local manual cache.
+- Route planning: use `plan_xways_operation` before deciding that a Windows UI runner is necessary.
+- Bridge gaps: if headless coverage is missing but X-Ways API coverage exists, use `create_xtension_scaffold` and record API provenance.
 - Record artifact paths, status JSON, audit log, and any blockers in the Markdown report.
 - Do not run launch_xways unless scope authorizes execution and XWAYS_MCP_ALLOW_EXECUTE=1.
 ```
@@ -104,14 +108,19 @@ FLOW:
 | senior tooling specialist | choose X-Ways/XWFIM only when proprietary Windows tooling is justified |
 | tool researcher | cite X-Ways docs, X-Tensions API, XWFIM version, release status, and local manual cache status |
 | tool provisioner | run `xwfim-preflight`, verify versions/hashes, prepare dry-run launch commands |
-| evidence collector | use `folder-triage` and future X-Tension exports inside approved roots |
+| evidence collector | use `folder-triage` and generated X-Tension exports inside approved roots |
 | artifact router | route X-Ways exports to timeline, tagged-file, report-table, and parser lanes |
 | timeline analyst | consume exported CSV/JSON/Markdown artifacts, not terminal dumps |
 | publication redactor | check reports and manifests before sharing; keep repo examples generic |
 
-## Future X-Tension Bridge
+## Generated X-Tension Bridges
 
-When an X-Tension bridge exists, expose it through the MCP server and keep the
-harness as the policy layer. In-process X-Ways tools should write export
-artifacts and status files into the approved case staging root rather than
-returning large evidence payloads directly to the agent.
+When a task requires in-process X-Ways access, generate a bridge scaffold through
+`create_xtension_scaffold`, then expose the finished bridge through the MCP
+server while keeping the harness as the policy layer. In-process X-Ways tools
+should write export artifacts and status files into the approved case staging
+root rather than returning large evidence payloads directly to the agent.
+
+Undocumented API work must be marked as version-bound and locally sourced. Do
+not mix case facts, recovery keys, evidence names, or recovered filenames into
+public docs, issues, commits, or web queries.

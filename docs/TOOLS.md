@@ -48,6 +48,32 @@ metadata. Use this before building headless commands or X-Ways script files.
 Convenience wrapper around `search_xways_manual` tuned for command-line,
 scripting, automated-processing, and `XTParam:*` lookups.
 
+## plan_xways_operation
+
+Chooses the preferred automation route for an X-Ways task:
+
+1. headless command/script/dialog/configuration route
+2. generated X-Tension bridge
+3. UI automation as the last resort
+
+The response includes detected headless/API terms, the selected route, case-data
+handling rules, and next steps. Use this before deciding that Windows UI
+automation is necessary.
+
+## create_xtension_scaffold
+
+Generates a local X-Tension bridge scaffold with:
+
+- `manifest.json`
+- `README.md`
+- `API_NOTES.md`
+- `src/<name>.cpp`
+- `build.ps1`
+
+The scaffold is intentionally local and provenance-heavy. Runners must record
+documented API symbols, any undocumented/version-bound behavior, and why no
+headless command or script covered the task.
+
 ## discover_installations
 
 Searches configured roots for:

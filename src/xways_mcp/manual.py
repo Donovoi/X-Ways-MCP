@@ -21,6 +21,7 @@ OFFICIAL_MANUAL_URLS = (
 OFFICIAL_DOC_PAGES = {
     "scripting": "https://www.x-ways.net/winhex/scripting.html",
     "administration": "https://www.x-ways.net/winhex/setup.html",
+    "x_tensions_api": "https://www.x-ways.net/forensics/x-tensions/api.html",
 }
 MANUAL_FILENAMES = {"manual.pdf"}
 INDEX_VERSION = 1

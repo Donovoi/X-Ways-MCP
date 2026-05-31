@@ -6,8 +6,9 @@ automation.
 This repo follows the same general idea as `bethington/ghidra-mcp`: put a
 specialist desktop analysis tool behind a structured MCP surface so agents can
 inspect state, run repeatable workflows, and keep a useful audit trail. The first
-version is intentionally a safe control plane. A future X-Tension bridge can add
-in-process X-Ways case and evidence-object access.
+version is intentionally a safe control plane. When command-line or scripting
+coverage is not enough, runners should generate a small X-Tension bridge for the
+specific in-process gap and document the API provenance for future runs.
 
 ## Current Capabilities
 
@@ -26,6 +27,8 @@ in-process X-Ways case and evidence-object access.
 - Fetch public X-Ways release information for quick version checks.
 - Cache and search the X-Ways manual locally for command-line, scripting, and
   headless workflow syntax.
+- Plan X-Ways operations with a headless-first, X-Tension-second, UI-last policy.
+- Generate local X-Tension bridge scaffolds with API notes and build hooks.
 
 ## Safety Model
 
@@ -38,6 +41,18 @@ Read-only and dry-run behavior is the default.
 
 This avoids accidentally starting analysis, imaging, or script workflows while an
 agent is still planning.
+
+Automation preference is:
+
+1. X-Ways command-line, scripts, saved dialog selections, `Cfg:`, `XT:`, and
+   `XTParam:*`.
+2. A generated X-Tension bridge when the task needs in-process X-Ways access or
+   the API covers something the headless surface cannot.
+3. UI automation only as a bounded last resort.
+
+If a runner uses documented or undocumented X-Tensions API behavior, it must
+record the symbols, X-Ways version constraints, and provenance in local bridge
+notes before using the bridge on real evidence.
 
 ## Requirements
 
@@ -123,6 +138,8 @@ Configure your MCP client with:
 - `cache_xways_manual`
 - `search_xways_manual`
 - `headless_xways_reference`
+- `plan_xways_operation`
+- `create_xtension_scaffold`
 - `discover_installations`
 - `inspect_xwfim_cache`
 - `validate_archive`
@@ -147,6 +164,8 @@ See [docs/TEST_ENVIRONMENTS.md](docs/TEST_ENVIRONMENTS.md) for disposable
 synthetic fixture testing.
 See [docs/HEADLESS_XWAYS.md](docs/HEADLESS_XWAYS.md) for local manual indexing
 and headless command lookup.
+See [docs/XTENSION_BRIDGE.md](docs/XTENSION_BRIDGE.md) for the generated
+X-Tension bridge workflow.
 
 ## XWFIM Validation Example
 
@@ -162,7 +181,7 @@ download.
 
 1. Stabilize the Python MCP control plane.
 2. Add stronger X-Ways script templates for repeatable triage.
-3. Build a small X-Tension DLL bridge for in-process case/evidence metadata.
+3. Generate operation-specific X-Tension DLL bridges for in-process gaps.
 4. Dynamically register X-Tension-backed tools when X-Ways is open.
 5. Add reporting workflows for timeline, search hit, and tagged-file exports.
 

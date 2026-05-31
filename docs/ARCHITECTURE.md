@@ -1,7 +1,8 @@
 # Architecture
 
-`xways-mcp` starts as a safe MCP control plane around X-Ways Forensics rather than
-an in-process replacement for X-Ways internals.
+`xways-mcp` starts as a safe MCP control plane around X-Ways Forensics. The
+preferred automation path is headless first, generated X-Tension bridge second,
+and UI automation last.
 
 ## Phase 1: Control Plane
 
@@ -14,6 +15,8 @@ The Python server exposes tools that can run without loading code into X-Ways:
 - inventory mounted folders or exported evidence trees
 - build X-Ways launch and script commands
 - optionally launch X-Ways when explicitly enabled
+- plan whether a task should use headless execution, an X-Tension bridge, or a
+  last-resort UI path
 
 Execution is off by default. Launching X-Ways requires both
 `XWAYS_MCP_ALLOW_EXECUTE=1` and a `confirm=true` tool argument.
@@ -41,12 +44,20 @@ small, disposable, and non-mutating. They let agents test harness behavior,
 status-file generation, audit logging, and XWFIM cache diagnostics before any
 real evidence is involved.
 
-## Phase 2: X-Tension Bridge
+## Phase 2: Generated X-Tension Bridge
 
-The natural next layer is a small X-Tension DLL loaded inside X-Ways. That bridge
-can expose a local named pipe or loopback HTTP endpoint to the Python MCP bridge.
-This mirrors the dynamic schema idea from GUI-integrated MCP projects while
-respecting X-Ways' extension boundary.
+The next layer is not a single monolithic DLL. Runners should generate a small
+operation-specific X-Tension DLL whenever a task cannot be done through X-Ways
+command-line/script/configuration surfaces but can be covered through the
+documented or locally researched X-Tensions API.
+
+Generated bridge scaffolds must include:
+
+- a manifest
+- API provenance notes
+- source code
+- build hook
+- clear local output policy
 
 Candidate in-process capabilities:
 
@@ -55,6 +66,11 @@ Candidate in-process capabilities:
 - export selected metadata to JSONL
 - run safe read-only filters over selected evidence objects
 - receive `XTParam:*` launch parameters for reproducible workflows
+- write local JSONL/CSV/status artifacts into the approved case workspace
+
+Undocumented API usage is allowed only as a local, version-bound bridge decision:
+record symbol provenance, calling convention assumptions, X-Ways version, failure
+behavior, and why no documented/headless route was sufficient.
 
 ## Phase 3: Workflow Automation
 
