@@ -1,8 +1,8 @@
 # Architecture
 
 `xways-mcp` starts as a safe MCP control plane around X-Ways Forensics. The
-preferred automation path is headless first, generated X-Tension bridge second,
-and UI automation last.
+preferred automation path is headless first, native distributed RVS when the
+manual supports it, generated X-Tension bridge next, and UI automation last.
 
 ## Phase 1: Control Plane
 
@@ -17,9 +17,31 @@ The Python server exposes tools that can run without loading code into X-Ways:
 - optionally launch X-Ways when explicitly enabled
 - plan whether a task should use headless execution, an X-Tension bridge, or a
   last-resort UI path
+- plan manual-backed parallel processing, preferring native distributed volume
+  snapshot refinement for different evidence objects in the same `.xfc` case
 
 Execution is off by default. Launching X-Ways requires both
 `XWAYS_MCP_ALLOW_EXECUTE=1` and a `confirm=true` tool argument.
+
+## Parallel Processing Layer
+
+The local X-Ways manual documents distributed volume snapshot refinement for
+different evidence objects in the same case. `xways-mcp` treats that as the
+preferred parallel strategy for RVS, file header signature search, carving, and
+similar refinement operations.
+
+The scheduler should:
+
+- open the same `.xfc` case copy in multiple instances
+- keep one full-access/master session at most
+- open other workers in shared/distributed partial read-only mode
+- assign different evidence objects to different workers
+- bound X-Ways internal worker threads per process so CPU and storage are not
+  oversubscribed
+
+Isolated worker cases remain a fallback when the native distributed mode cannot
+be driven safely. GPU is not assumed to be native X-Ways functionality; use only
+local sidecars or generated bridges after disposable benchmarks.
 
 ## Harness Layer
 

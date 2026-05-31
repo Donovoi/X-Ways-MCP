@@ -27,8 +27,11 @@ specific in-process gap and document the API provenance for future runs.
 - Fetch public X-Ways release information for quick version checks.
 - Cache and search the X-Ways manual locally for command-line, scripting, and
   headless workflow syntax.
-- Plan X-Ways operations with a headless-first, X-Tension-second, UI-last policy.
+- Plan X-Ways operations with a headless-first, native-distributed-RVS,
+  X-Tension-next, UI-last policy.
 - Generate local X-Tension bridge scaffolds with API notes and build hooks.
+- Plan parallel X-Ways processing from the local manual: native distributed
+  volume snapshot refinement first, isolated worker cases only as fallback.
 
 ## Safety Model
 
@@ -46,9 +49,11 @@ Automation preference is:
 
 1. X-Ways command-line, scripts, saved dialog selections, `Cfg:`, `XT:`, and
    `XTParam:*`.
-2. A generated X-Tension bridge when the task needs in-process X-Ways access or
+2. X-Ways native distributed RVS for different evidence objects in the same case
+   when the manual supports it.
+3. A generated X-Tension bridge when the task needs in-process X-Ways access or
    the API covers something the headless surface cannot.
-3. UI automation only as a bounded last resort.
+4. UI automation only as a bounded last resort.
 
 If a runner uses documented or undocumented X-Tensions API behavior, it must
 record the symbols, X-Ways version constraints, and provenance in local bridge
@@ -139,6 +144,7 @@ Configure your MCP client with:
 - `search_xways_manual`
 - `headless_xways_reference`
 - `plan_xways_operation`
+- `plan_parallel_xways_jobs`
 - `create_xtension_scaffold`
 - `discover_installations`
 - `inspect_xwfim_cache`
@@ -164,6 +170,8 @@ See [docs/TEST_ENVIRONMENTS.md](docs/TEST_ENVIRONMENTS.md) for disposable
 synthetic fixture testing.
 See [docs/HEADLESS_XWAYS.md](docs/HEADLESS_XWAYS.md) for local manual indexing
 and headless command lookup.
+See [docs/PARALLEL_PROCESSING.md](docs/PARALLEL_PROCESSING.md) for the
+manual-backed distributed processing policy.
 See [docs/XTENSION_BRIDGE.md](docs/XTENSION_BRIDGE.md) for the generated
 X-Tension bridge workflow.
 
@@ -181,9 +189,10 @@ download.
 
 1. Stabilize the Python MCP control plane.
 2. Add stronger X-Ways script templates for repeatable triage.
-3. Generate operation-specific X-Tension DLL bridges for in-process gaps.
-4. Dynamically register X-Tension-backed tools when X-Ways is open.
-5. Add reporting workflows for timeline, search hit, and tagged-file exports.
+3. Add native distributed RVS orchestration for multi-instance same-case runs.
+4. Generate operation-specific X-Tension DLL bridges for in-process gaps.
+5. Dynamically register X-Tension-backed tools when X-Ways is open.
+6. Add reporting workflows for timeline, search hit, and tagged-file exports.
 
 ## References
 
