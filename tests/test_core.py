@@ -16,6 +16,7 @@ from xways_mcp.core import (
     validate_zip,
 )
 from xways_mcp.manual import cache_xways_manual, discover_manual_candidates, search_manual_index
+from xways_mcp.xtension import create_xtension_scaffold, plan_xways_operation, sanitize_identifier
 
 
 def test_validate_zip_valid_and_truncated(tmp_path: Path):
@@ -155,3 +156,47 @@ def test_cache_and_search_manual_text_source(tmp_path: Path):
     assert result["ok"] is True
     assert result["results"]
     assert "XTParam" in result["results"][0]["snippet"]
+
+
+def test_plan_xways_operation_prefers_headless():
+    result = plan_xways_operation("Run command line script with XTParam values")
+
+    assert result["selected_route"] == "headless_command_or_script"
+    assert result["preference_order"][0] == "headless_command_or_script"
+    assert "xtparam" in result["detected_headless_terms"]
+
+
+def test_plan_xways_operation_escalates_to_xtension():
+    result = plan_xways_operation("List open evidence objects and volume snapshot metadata")
+
+    assert result["selected_route"] == "generated_x_tension_bridge"
+    assert "evidence object" in result["detected_xtension_terms"]
+
+
+def test_create_xtension_scaffold(tmp_path: Path):
+    result = create_xtension_scaffold(
+        "metadata bridge",
+        output_root=str(tmp_path),
+        purpose="Export synthetic metadata counts.",
+        api_reference="local fixture docs",
+        documented_symbols="XT_Init\nXWF_GetVSProp",
+    )
+
+    root = Path(result["path"])
+    assert result["created"] is True
+    assert root.name == "metadata_bridge"
+    assert (root / "manifest.json").exists()
+    assert (root / "README.md").exists()
+    assert (root / "API_NOTES.md").exists()
+    assert (root / "src" / "metadata_bridge.cpp").exists()
+
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["execution_policy"][0] == "headless_command_or_script"
+    assert "XT_Init" in manifest["documented_symbols"]
+
+    duplicate = create_xtension_scaffold("metadata bridge", output_root=str(tmp_path))
+    assert duplicate["created"] is False
+
+
+def test_sanitize_identifier_prefixes_digit():
+    assert sanitize_identifier("123 bridge").startswith("Xways_")

@@ -41,6 +41,10 @@ from .testenv import (
     list_testenvs,
     run_testenv,
 )
+from .xtension import (
+    create_xtension_scaffold as core_create_xtension_scaffold,
+    plan_xways_operation as core_plan_xways_operation,
+)
 
 
 mcp = FastMCP("xways-mcp")
@@ -109,6 +113,50 @@ def search_xways_manual(query: str, cache_dir: str = "", limit: int = 8, max_cha
 def headless_xways_reference(topic: str = "", cache_dir: str = "", limit: int = 8) -> str:
     """Retrieve local manual snippets relevant to X-Ways command-line and scripting automation."""
     return json_text(core_headless_reference(topic=topic, cache_dir=cache_dir, limit=limit))
+
+
+@mcp.tool()
+def plan_xways_operation(
+    operation: str,
+    known_headless: bool = False,
+    known_xtension_api: bool = False,
+    requires_in_process: bool = False,
+    allow_ui_fallback: bool = False,
+) -> str:
+    """Choose the preferred X-Ways route: headless first, X-Tension second, UI last."""
+    return json_text(
+        core_plan_xways_operation(
+            operation,
+            known_headless=known_headless,
+            known_xtension_api=known_xtension_api,
+            requires_in_process=requires_in_process,
+            allow_ui_fallback=allow_ui_fallback,
+        )
+    )
+
+
+@mcp.tool()
+def create_xtension_scaffold(
+    name: str,
+    output_root: str = "xtensions",
+    purpose: str = "",
+    api_reference: str = "",
+    documented_symbols: str = "",
+    undocumented_symbols: str = "",
+    force: bool = False,
+) -> str:
+    """Generate a local X-Tension bridge scaffold with API provenance notes."""
+    return json_text(
+        core_create_xtension_scaffold(
+            name,
+            output_root=output_root,
+            purpose=purpose,
+            api_reference=api_reference,
+            documented_symbols=documented_symbols,
+            undocumented_symbols=undocumented_symbols,
+            force=force,
+        )
+    )
 
 
 @mcp.tool()
