@@ -1,13 +1,16 @@
 # Architecture
 
 `xways-mcp` starts as a safe MCP control plane around X-Ways Forensics. The
-preferred automation path is headless first, native distributed RVS when the
-manual supports it, generated X-Tension bridge next, and UI automation last.
+preferred automation path is manual first, headless next, native distributed RVS
+when the manual supports it, generated X-Tension bridge after that, and UI
+automation last.
 
 ## Phase 1: Control Plane
 
 The Python server exposes tools that can run without loading code into X-Ways:
 
+- check and search the newest available local/official X-Ways manual/docs before
+  choosing commands, APIs, distributed modes, X-Tensions, or UI fallback
 - discover portable X-Ways, WinHex, X-Ways Imager, and XWFIM executables
 - validate XWFIM download caches and catch truncated ZIPs
 - hash evidence and downloaded packages

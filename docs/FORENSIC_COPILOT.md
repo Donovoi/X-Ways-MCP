@@ -31,6 +31,9 @@ The harness follows these `forensic-copilot` expectations:
 - broad outputs written to files, with terminal output limited to paths/counts
 - no plaintext secret dumping
 - launch/execution remains gated separately from inventory and validation
+- tool decisions are manual-first: check the newest available official/manual
+  docs or approved local docs cache before selecting commands, APIs,
+  distributed processing, X-Tensions, or UI fallback
 - X-Ways automation prefers headless commands/scripts first, native distributed
   RVS when manual-backed, generated X-Tensions next, and UI automation last
 - parallel RVS should follow the local X-Ways manual: native distributed

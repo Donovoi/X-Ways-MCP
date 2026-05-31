@@ -3,6 +3,10 @@
 `xways-mcp` uses the local X-Ways manual as the source of truth before choosing
 a parallel execution strategy.
 
+Manual first is mandatory for any program-level decision. If the current manual
+or official docs already provide a native distributed, threaded, command-line,
+or API route, prefer that before custom orchestration.
+
 ## Manual-Backed Findings
 
 The local manual cache documents native distributed volume snapshot refinement:
