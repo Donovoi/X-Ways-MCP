@@ -15,6 +15,7 @@ from xways_mcp.core import (
     triage_inventory,
     validate_zip,
 )
+from xways_mcp.manual import cache_xways_manual, discover_manual_candidates, search_manual_index
 
 
 def test_validate_zip_valid_and_truncated(tmp_path: Path):
@@ -123,3 +124,34 @@ def test_build_xways_command(tmp_path: Path):
 def test_sanitize_case_name_rejects_empty():
     with pytest.raises(ValueError):
         sanitize_case_name("???")
+
+
+def test_discover_manual_candidates(tmp_path: Path):
+    manual = tmp_path / "manual.pdf"
+    manual.write_bytes(b"%PDF placeholder")
+
+    found = discover_manual_candidates([tmp_path])
+
+    assert len(found) == 1
+    assert found[0]["path"].endswith("manual.pdf")
+    assert found[0]["sha256"]
+
+
+def test_cache_and_search_manual_text_source(tmp_path: Path):
+    source = tmp_path / "manual.txt"
+    source.write_text(
+        "Command Line Parameters\n"
+        "The command line can pass a case path, evidence path, scripts, and XTParam values.\n\n"
+        "Scripting\n"
+        "Automated processing can use script commands for repeatable workflows.\n",
+        encoding="utf-8",
+    )
+
+    cached = cache_xways_manual(source=str(source), cache_dir=str(tmp_path / "cache"))
+    assert cached["ok"] is True
+    assert cached["chunks"] >= 1
+
+    result = search_manual_index("command line XTParam", cache_dir=str(tmp_path / "cache"))
+    assert result["ok"] is True
+    assert result["results"]
+    assert "XTParam" in result["results"][0]["snippet"]

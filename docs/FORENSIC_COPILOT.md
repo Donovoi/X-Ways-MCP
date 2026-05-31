@@ -44,6 +44,7 @@ FLOW:
 - Stage under artifacts/CASE-001 and write reports/CASE-001.md before collection.
 - Preflight XWFIM: python -m xways_mcp.harness xwfim-preflight --case-name CASE-001 --xwfim-root <XWFIM_ROOT> --staging-root artifacts --output-root reports --evidence-os Windows --evidence-mode portable-tooling
 - Folder triage: python -m xways_mcp.harness folder-triage --case-name CASE-001 --input-root <APPROVED_INPUT_ROOT> --staging-root artifacts --output-root reports --depth triage
+- Manual lookup: use `manual_status`, `cache_xways_manual`, and `headless_xways_reference` to retrieve X-Ways command-line/script syntax from the local manual cache.
 - Record artifact paths, status JSON, audit log, and any blockers in the Markdown report.
 - Do not run launch_xways unless scope authorizes execution and XWAYS_MCP_ALLOW_EXECUTE=1.
 ```
@@ -101,7 +102,7 @@ FLOW:
 | Forensic Copilot role | xways-mcp support |
 | --- | --- |
 | senior tooling specialist | choose X-Ways/XWFIM only when proprietary Windows tooling is justified |
-| tool researcher | cite X-Ways docs, X-Tensions API, XWFIM version, release status |
+| tool researcher | cite X-Ways docs, X-Tensions API, XWFIM version, release status, and local manual cache status |
 | tool provisioner | run `xwfim-preflight`, verify versions/hashes, prepare dry-run launch commands |
 | evidence collector | use `folder-triage` and future X-Tension exports inside approved roots |
 | artifact router | route X-Ways exports to timeline, tagged-file, report-table, and parser lanes |

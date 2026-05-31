@@ -11,6 +11,43 @@ Fetches public X-Ways release information from X-Ways pages. This is only a
 convenience check; licensed downloads still require the user's X-Ways
 credentials.
 
+## manual_status
+
+Reports whether a local offline manual index exists and lists local
+`manual.pdf` candidates. With `check_online=true`, it checks public X-Ways
+manual headers without sending any case data.
+
+## cache_xways_manual
+
+Copies or downloads the X-Ways manual into a gitignored local cache and builds a
+searchable text index for model lookup. The manual itself is not committed to
+the repository.
+
+Useful modes:
+
+- `source="<XWAYS_ROOT>\\manual.pdf"`: use the manual already shipped with the
+  local X-Ways installation.
+- `download_latest=true`: download the public manual from X-Ways.
+- `fetch_official_docs=true`: also cache the official scripting and setup pages.
+
+Default cache location:
+
+```text
+tooling/cache/xways-manual
+```
+
+Override with `XWAYS_MCP_MANUAL_CACHE` or the tool's `cache_dir` argument.
+
+## search_xways_manual
+
+Searches the local manual/docs index and returns small snippets with page/source
+metadata. Use this before building headless commands or X-Ways script files.
+
+## headless_xways_reference
+
+Convenience wrapper around `search_xways_manual` tuned for command-line,
+scripting, automated-processing, and `XTParam:*` lookups.
+
 ## discover_installations
 
 Searches configured roots for:
