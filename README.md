@@ -24,6 +24,8 @@ in-process X-Ways case and evidence-object access.
 - Build X-Ways launch commands without executing them.
 - Optionally launch X-Ways when explicitly enabled.
 - Fetch public X-Ways release information for quick version checks.
+- Cache and search the X-Ways manual locally for command-line, scripting, and
+  headless workflow syntax.
 
 ## Safety Model
 
@@ -54,6 +56,19 @@ python -m venv .venv
 python -m pip install -e ".[dev]"
 pytest
 python -m xways_mcp --transport stdio
+```
+
+Cache the current X-Ways manual locally for offline model lookup:
+
+```powershell
+python -m pip install -e ".[dev]"
+python -c "from xways_mcp.manual import cache_xways_manual; print(cache_xways_manual(source=r'<XWAYS_ROOT>\manual.pdf'))"
+```
+
+To refresh from the public X-Ways manual and official scripting/setup pages:
+
+```powershell
+python -c "from xways_mcp.manual import cache_xways_manual; print(cache_xways_manual(download_latest=True, fetch_official_docs=True, refresh=True))"
 ```
 
 Run the MCP stdio smoke test:
@@ -104,6 +119,10 @@ Configure your MCP client with:
 
 - `environment`
 - `public_xways_release`
+- `manual_status`
+- `cache_xways_manual`
+- `search_xways_manual`
+- `headless_xways_reference`
 - `discover_installations`
 - `inspect_xwfim_cache`
 - `validate_archive`
@@ -126,6 +145,8 @@ See [docs/FORENSIC_COPILOT.md](docs/FORENSIC_COPILOT.md) for integration with
 `Donovoi/forensic-copilot`.
 See [docs/TEST_ENVIRONMENTS.md](docs/TEST_ENVIRONMENTS.md) for disposable
 synthetic fixture testing.
+See [docs/HEADLESS_XWAYS.md](docs/HEADLESS_XWAYS.md) for local manual indexing
+and headless command lookup.
 
 ## XWFIM Validation Example
 
@@ -148,6 +169,7 @@ download.
 ## References
 
 - X-Ways X-Tensions API: <https://www.x-ways.net/forensics/x-tensions/api.html>
+- X-Ways manual: <https://www.x-ways.net/winhex/manual.pdf>
 - X-Ways scripting: <https://www.x-ways.net/winhex/scripting.html>
 - X-Ways command-line setup notes: <https://www.x-ways.net/winhex/setup.html>
 - X-Ways release mailing list: <https://www.x-ways.net/winhex/mailings/>

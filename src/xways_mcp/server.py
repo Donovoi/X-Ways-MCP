@@ -27,6 +27,12 @@ from .harness import (
     run_folder_triage,
     run_xwfim_preflight,
 )
+from .manual import (
+    cache_xways_manual as core_cache_xways_manual,
+    headless_reference as core_headless_reference,
+    manual_cache_status as core_manual_cache_status,
+    search_manual_index,
+)
 from .testenv import (
     build_testenv,
     create_testenv,
@@ -56,6 +62,53 @@ def environment() -> str:
 def public_xways_release(timeout: int = 20) -> str:
     """Fetch the public X-Ways release version from X-Ways web pages."""
     return json_text(fetch_public_release(timeout=timeout))
+
+
+@mcp.tool()
+def manual_status(search_roots: str = "", cache_dir: str = "", check_online: bool = False, timeout: int = 20) -> str:
+    """Report local X-Ways manual candidates and the offline manual index status."""
+    return json_text(
+        core_manual_cache_status(
+            search_roots=search_roots,
+            cache_dir=cache_dir,
+            check_online=check_online,
+            timeout=timeout,
+        )
+    )
+
+
+@mcp.tool()
+def cache_xways_manual(
+    source: str = "",
+    cache_dir: str = "",
+    refresh: bool = False,
+    download_latest: bool = False,
+    fetch_official_docs: bool = False,
+    timeout: int = 30,
+) -> str:
+    """Cache and index the X-Ways manual locally for offline model lookup."""
+    return json_text(
+        core_cache_xways_manual(
+            source=source,
+            cache_dir=cache_dir,
+            refresh=refresh,
+            download_latest=download_latest,
+            fetch_official_docs=fetch_official_docs,
+            timeout=timeout,
+        )
+    )
+
+
+@mcp.tool()
+def search_xways_manual(query: str, cache_dir: str = "", limit: int = 8, max_chars: int = 900) -> str:
+    """Search the local X-Ways manual/docs index for command syntax and workflow details."""
+    return json_text(search_manual_index(query=query, cache_dir=cache_dir, limit=limit, max_chars=max_chars))
+
+
+@mcp.tool()
+def headless_xways_reference(topic: str = "", cache_dir: str = "", limit: int = 8) -> str:
+    """Retrieve local manual snippets relevant to X-Ways command-line and scripting automation."""
+    return json_text(core_headless_reference(topic=topic, cache_dir=cache_dir, limit=limit))
 
 
 @mcp.tool()
