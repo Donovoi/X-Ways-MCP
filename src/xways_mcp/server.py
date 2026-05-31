@@ -27,6 +27,14 @@ from .harness import (
     run_folder_triage,
     run_xwfim_preflight,
 )
+from .testenv import (
+    build_testenv,
+    create_testenv,
+    destroy_testenv,
+    expand_os,
+    list_testenvs,
+    run_testenv,
+)
 
 
 mcp = FastMCP("xways-mcp")
@@ -250,6 +258,69 @@ def harness_folder_triage(
         hash_small_files=hash_small_files,
     )
     return json_text(result)
+
+
+@mcp.tool()
+def testenv_create(
+    name: str = "CASE-001",
+    evidence_os: str = "windows",
+    root: str = "test-envs",
+    cache: str = "truncated",
+    force: bool = False,
+) -> str:
+    """Create a synthetic disposable fixture environment for windows/linux/macos/generic evidence."""
+    results = [create_testenv(root, name, os_name, cache=cache, force=force) for os_name in expand_os(evidence_os)]
+    return json_text({"results": results})
+
+
+@mcp.tool()
+def testenv_build(
+    name: str = "CASE-001",
+    evidence_os: str = "windows",
+    root: str = "test-envs",
+    cache: str = "truncated",
+    force: bool = False,
+) -> str:
+    """Create a disposable fixture environment and immediately run harness checks."""
+    results = [build_testenv(root, name, os_name, cache=cache, force=force) for os_name in expand_os(evidence_os)]
+    return json_text({"results": results})
+
+
+@mcp.tool()
+def testenv_run(name: str = "CASE-001", evidence_os: str = "windows", root: str = "test-envs") -> str:
+    """Run harness checks against an existing disposable fixture environment."""
+    results = [run_testenv(root, name, os_name) for os_name in expand_os(evidence_os)]
+    return json_text({"results": results})
+
+
+@mcp.tool()
+def testenv_destroy(
+    name: str = "CASE-001",
+    evidence_os: str = "windows",
+    root: str = "test-envs",
+    confirm: bool = False,
+    missing_ok: bool = False,
+) -> str:
+    """Delete a managed disposable fixture environment only when confirm=true."""
+    if not confirm:
+        return json_text(
+            {
+                "deleted": False,
+                "dry_run": True,
+                "reason": "Pass confirm=true to delete a managed test environment.",
+                "name": name,
+                "evidence_os": evidence_os,
+                "root": root,
+            }
+        )
+    results = [destroy_testenv(root, name, os_name, missing_ok=missing_ok) for os_name in expand_os(evidence_os)]
+    return json_text({"results": results})
+
+
+@mcp.tool()
+def testenv_list(root: str = "test-envs") -> str:
+    """List managed disposable fixture environments."""
+    return json_text(list_testenvs(root))
 
 
 def main() -> None:

@@ -87,6 +87,15 @@ The same harness is also exposed as MCP tools:
 - `harness_xwfim_preflight`
 - `harness_folder_triage`
 
+For fixture-only agent tests, use `xways-testenv` or its MCP equivalents:
+
+```text
+FLOW:
+- Build fixture: python -m xways_mcp.testenv build --name CASE-001 --evidence-os all --root test-envs --force
+- Inspect generated reports/status JSON under test-envs/*, but do not treat fixture facts as real evidence.
+- Delete fixture: python -m xways_mcp.testenv destroy --name CASE-001 --evidence-os all --root test-envs --missing-ok
+```
+
 ## Tool Mapping
 
 | Forensic Copilot role | xways-mcp support |

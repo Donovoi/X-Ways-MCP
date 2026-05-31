@@ -19,6 +19,8 @@ in-process X-Ways case and evidence-object access.
 - Build read-only triage inventories for mounted folders or exports.
 - Run a forensic harness that writes case manifests, report stubs, status JSON,
   and audit logs compatible with `Donovoi/forensic-copilot`.
+- Create disposable synthetic test environments for Windows, Linux, macOS, and
+  generic evidence fixtures.
 - Build X-Ways launch commands without executing them.
 - Optionally launch X-Ways when explicitly enabled.
 - Fetch public X-Ways release information for quick version checks.
@@ -72,6 +74,13 @@ python -m xways_mcp.harness xwfim-preflight `
   --evidence-mode portable-tooling
 ```
 
+Build disposable synthetic fixtures for every supported evidence OS:
+
+```powershell
+python -m xways_mcp.testenv build --name CASE-001 --evidence-os all --root test-envs --force
+python -m xways_mcp.testenv destroy --name CASE-001 --evidence-os all --root test-envs --missing-ok
+```
+
 Configure your MCP client with:
 
 ```json
@@ -106,10 +115,17 @@ Configure your MCP client with:
 - `harness_init_case`
 - `harness_xwfim_preflight`
 - `harness_folder_triage`
+- `testenv_create`
+- `testenv_build`
+- `testenv_run`
+- `testenv_destroy`
+- `testenv_list`
 
 See [docs/TOOLS.md](docs/TOOLS.md) for details.
 See [docs/FORENSIC_COPILOT.md](docs/FORENSIC_COPILOT.md) for integration with
 `Donovoi/forensic-copilot`.
+See [docs/TEST_ENVIRONMENTS.md](docs/TEST_ENVIRONMENTS.md) for disposable
+synthetic fixture testing.
 
 ## XWFIM Validation Example
 
