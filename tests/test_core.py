@@ -16,6 +16,7 @@ from xways_mcp.core import (
     validate_zip,
 )
 from xways_mcp.manual import cache_xways_manual, discover_manual_candidates, search_manual_index
+from xways_mcp.parallel import plan_parallel_xways_jobs
 from xways_mcp.xtension import create_xtension_scaffold, plan_xways_operation, sanitize_identifier
 
 
@@ -200,3 +201,32 @@ def test_create_xtension_scaffold(tmp_path: Path):
 
 def test_sanitize_identifier_prefixes_digit():
     assert sanitize_identifier("123 bridge").startswith("Xways_")
+
+
+def test_parallel_plan_prefers_manual_backed_distributed_rvs(tmp_path: Path):
+    plan = plan_parallel_xways_jobs(
+        case_name="CASE-001",
+        evidence_paths="evidence1.e01\nevidence2.e01\nevidence3.e01",
+        workspace_root=str(tmp_path),
+        case_path=str(tmp_path / "case.xfc"),
+        operation="Refine Volume Snapshot with file header signature search",
+        requested_workers=2,
+    )
+
+    assert plan["execution_mode"] == "native_distributed_rvs"
+    assert plan["case_strategy"]["mode"] == "same_xfc_distributed_mode"
+    assert plan["worker_count"] == 2
+    assert plan["scheduling"]["batch_count"] == 2
+    assert plan["manual_findings"]["distributed_rvs"]["manual_lines"] == "xways-manual.txt:4593-4606"
+
+
+def test_parallel_plan_does_not_assume_native_gpu(tmp_path: Path):
+    plan = plan_parallel_xways_jobs(
+        case_name="CASE-001",
+        evidence_paths="evidence1.e01",
+        workspace_root=str(tmp_path),
+        operation="file carving",
+    )
+
+    assert plan["gpu"]["xways_native_gpu"] == "not_assumed"
+    assert plan["gpu"]["selected_route"] == "not_enabled_native_unconfirmed"

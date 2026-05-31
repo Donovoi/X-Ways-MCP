@@ -57,3 +57,14 @@ X-Tensions must write evidence-derived output to the approved local case
 workspace. Agent-visible responses should contain status, counts, and artifact
 paths only. Do not print recovery keys, evidence names, recovered filenames, or
 case-sensitive paths.
+
+## Parallel And GPU Notes
+
+The local manual cache says file-wise X-Tension processing through
+`XT_ProcessItem` or `XT_ProcessItemEx` can be parallelized when the X-Tension
+identifies itself as thread-safe. Any generated bridge that opts into that must
+document its shared state, locking, output file ownership, and X-Ways version.
+
+No native X-Ways GPU control was found in the local manual/docs cache. GPU work
+should therefore be implemented only as a local sidecar or bridge-assisted
+pipeline after testing with disposable fixture evidence.

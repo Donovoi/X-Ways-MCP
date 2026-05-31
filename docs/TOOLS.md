@@ -53,12 +53,31 @@ scripting, automated-processing, and `XTParam:*` lookups.
 Chooses the preferred automation route for an X-Ways task:
 
 1. headless command/script/dialog/configuration route
-2. generated X-Tension bridge
-3. UI automation as the last resort
+2. native distributed RVS when the local manual supports it
+3. generated X-Tension bridge
+4. UI automation as the last resort
 
 The response includes detected headless/API terms, the selected route, case-data
 handling rules, and next steps. Use this before deciding that Windows UI
 automation is necessary.
+
+## plan_parallel_xways_jobs
+
+Builds a sanitized parallel execution plan without launching X-Ways.
+
+The planner is manual-backed:
+
+- RVS/file header signature search/carving operations default to X-Ways native
+  distributed volume snapshot refinement for different evidence objects in the
+  same `.xfc` case.
+- X-Ways internal CPU worker threads are included in the capacity plan.
+- Isolated per-evidence worker cases are treated as a fallback when native
+  distributed same-case mode cannot be driven safely.
+- GPU is not assumed to be native X-Ways functionality. GPU acceleration must be
+  a local sidecar or X-Tension bridge with disposable benchmark evidence first.
+
+By default the response redacts full evidence paths. Use `write_plan=true` to
+write the sensitive worker details into a local case artifact.
 
 ## create_xtension_scaffold
 

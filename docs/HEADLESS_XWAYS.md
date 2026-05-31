@@ -22,9 +22,11 @@ Use this order:
 
 1. Command line, scripts, `Dlg:`, `Cfg:`, `XT:`, `XTParam:*`, and saved X-Ways
    settings.
-2. Generated X-Tension bridge for in-process case, evidence object, volume
+2. Native distributed RVS for different evidence objects in the same case when
+   the local manual supports the task.
+3. Generated X-Tension bridge for in-process case, evidence object, volume
    snapshot, search hit, tag/comment, metadata, or sector-level access.
-3. UI automation only as a bounded last resort, with sanitized status reporting.
+4. UI automation only as a bounded last resort, with sanitized status reporting.
 
 ## Recommended Flow
 
@@ -59,7 +61,23 @@ Use this order:
    plan_xways_operation(operation="export volume snapshot metadata")
    ```
 
-6. If the route requires in-process access, generate a bridge scaffold:
+6. For RVS, file header signature search, carving, indexing, or similar
+   processing, ask for a manual-backed parallel plan:
+
+   ```text
+   plan_parallel_xways_jobs(
+     case_name="CASE-001",
+     evidence_paths="<one path per line>",
+     case_path="<same-case.xfc>",
+     operation="Refine Volume Snapshot with file header signature search"
+   )
+   ```
+
+   The current local manual cache supports distributed RVS for different
+   evidence objects in the same case, so that route is preferred over isolated
+   worker cases when it can be driven safely.
+
+7. If the route requires in-process access, generate a bridge scaffold:
 
    ```text
    create_xtension_scaffold(

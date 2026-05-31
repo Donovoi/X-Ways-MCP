@@ -33,6 +33,7 @@ from .manual import (
     manual_cache_status as core_manual_cache_status,
     search_manual_index,
 )
+from .parallel import plan_parallel_xways_jobs as core_plan_parallel_xways_jobs
 from .testenv import (
     build_testenv,
     create_testenv,
@@ -123,7 +124,7 @@ def plan_xways_operation(
     requires_in_process: bool = False,
     allow_ui_fallback: bool = False,
 ) -> str:
-    """Choose the preferred X-Ways route: headless first, X-Tension second, UI last."""
+    """Choose the preferred X-Ways route: headless, native distributed RVS, X-Tension, then UI."""
     return json_text(
         core_plan_xways_operation(
             operation,
@@ -155,6 +156,46 @@ def create_xtension_scaffold(
             documented_symbols=documented_symbols,
             undocumented_symbols=undocumented_symbols,
             force=force,
+        )
+    )
+
+
+@mcp.tool()
+def plan_parallel_xways_jobs(
+    case_name: str,
+    evidence_paths: str,
+    workspace_root: str = "artifacts",
+    case_path: str = "",
+    operation: str = "xways_analysis",
+    requested_workers: int = 0,
+    max_workers: int = 0,
+    xways_extra_threads_per_worker: int = 0,
+    execution_mode: str = "auto",
+    gpu_mode: str = "auto",
+    executable: str = "",
+    script_path: str = "",
+    allow_shared_case: bool = False,
+    include_sensitive_paths: bool = False,
+    write_plan: bool = False,
+) -> str:
+    """Plan manual-backed parallel X-Ways workers without launching them."""
+    return json_text(
+        core_plan_parallel_xways_jobs(
+            case_name=case_name,
+            evidence_paths=evidence_paths,
+            workspace_root=workspace_root,
+            case_path=case_path,
+            operation=operation,
+            requested_workers=requested_workers,
+            max_workers=max_workers,
+            xways_extra_threads_per_worker=xways_extra_threads_per_worker,
+            execution_mode=execution_mode,
+            gpu_mode=gpu_mode,
+            executable=executable,
+            script_path=script_path,
+            allow_shared_case=allow_shared_case,
+            include_sensitive_paths=include_sensitive_paths,
+            write_plan=write_plan,
         )
     )
 
