@@ -1,0 +1,8 @@
+// Example WinHex/X-Ways script placeholder for a read-only triage workflow.
+// Review and adapt in X-Ways before running against evidence.
+//
+// Keep scripts under the case workspace's scripts directory and launch them via
+// build_launch_command first so the MCP client can show the exact command.
+
+MessageBox "xways-mcp script hook is configured."
+

@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "xways-mcp": {
+      "command": "python",
+      "args": [
+        "-m",
+        "xways_mcp",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "XWAYS_HOME": "",
+        "XWAYS_MCP_SEARCH_ROOTS": "",
+        "XWAYS_MCP_ALLOW_EXECUTE": "0",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  }
+}
+
