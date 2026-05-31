@@ -33,6 +33,14 @@ small number of command templates and receive durable artifacts:
 The harness owns scope boundaries and output placement. The MCP tools own the
 individual capabilities.
 
+## Disposable Test Environments
+
+`xways-testenv` creates synthetic evidence trees for Windows, Linux, macOS, and
+generic evidence on any Python runner. These environments are intentionally
+small, disposable, and non-mutating. They let agents test harness behavior,
+status-file generation, audit logging, and XWFIM cache diagnostics before any
+real evidence is involved.
+
 ## Phase 2: X-Tension Bridge
 
 The natural next layer is a small X-Tension DLL loaded inside X-Ways. That bridge

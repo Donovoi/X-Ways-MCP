@@ -88,3 +88,27 @@ Runs the XWFIM cache/install validation through the harness. This writes:
 
 Runs read-only folder inventory through the harness and writes durable artifact,
 status, report, and audit files.
+
+## testenv_create
+
+Creates a managed synthetic fixture environment for `windows`, `linux`,
+`macos`, `generic`, or `all`. The fixture contains tiny placeholder artifacts and
+an optional XWFIM cache state.
+
+## testenv_build
+
+Creates a synthetic fixture and immediately runs harness checks against it.
+
+## testenv_run
+
+Runs harness checks against an existing managed fixture.
+
+## testenv_destroy
+
+Deletes a managed fixture only when `confirm=true` over MCP. The delete logic
+refuses directories whose `testenv.json` does not identify them as
+`xways-mcp-testenv`.
+
+## testenv_list
+
+Lists managed synthetic fixture environments under a root such as `test-envs/`.
