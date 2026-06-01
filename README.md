@@ -32,6 +32,8 @@ specific in-process gap and document the API provenance for future runs.
 - Generate local X-Tension bridge scaffolds with API notes and build hooks.
 - Plan parallel X-Ways processing from the local manual: native distributed
   volume snapshot refinement first, isolated worker cases only as fallback.
+- Provide a reusable PowerShell guardrail module for container-first exports,
+  manual/action gates, and contemporaneous notes.
 
 ## Safety Model
 
@@ -61,6 +63,12 @@ Automation preference is:
 If a runner uses documented or undocumented X-Tensions API behavior, it must
 record the symbols, X-Ways version constraints, and provenance in local bridge
 notes before using the bridge on real evidence.
+
+File-content exports are container-first. Metadata-only lists can be exported
+for planning, but copied/recovered file contents must first go into an X-Ways
+evidence file container. External parsing and parallel usage-pattern analysis
+then run against the container or a derived copy from the container, never
+directly against original evidence.
 
 ## Requirements
 
@@ -179,6 +187,8 @@ See [docs/PARALLEL_PROCESSING.md](docs/PARALLEL_PROCESSING.md) for the
 manual-backed distributed processing policy.
 See [docs/XTENSION_BRIDGE.md](docs/XTENSION_BRIDGE.md) for the generated
 X-Tension bridge workflow.
+See [docs/FORENSIC_SOUNDNESS.md](docs/FORENSIC_SOUNDNESS.md) for the
+container-first export policy and reusable PowerShell module.
 
 ## XWFIM Validation Example
 
