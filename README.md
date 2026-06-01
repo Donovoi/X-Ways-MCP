@@ -34,6 +34,9 @@ specific in-process gap and document the API provenance for future runs.
   volume snapshot refinement first, isolated worker cases only as fallback.
 - Provide a reusable PowerShell guardrail module for container-first exports,
   manual/action gates, and contemporaneous notes.
+- Prefer query-first X-Ways analysis through command-line/script, Export List
+  metadata, X-Tensions, reports, or bounded UI before materializing file
+  contents.
 - Maintain a generic best-practice catalog so notes can record which
   jurisdiction/SOP guidance was followed and why.
 
@@ -66,11 +69,12 @@ If a runner uses documented or undocumented X-Tensions API behavior, it must
 record the symbols, X-Ways version constraints, and provenance in local bridge
 notes before using the bridge on real evidence.
 
-File-content exports are container-first. Metadata-only lists can be exported
-for planning, but copied/recovered file contents must first go into an X-Ways
-evidence file container. External parsing and parallel usage-pattern analysis
-then run against the container or a derived copy from the container, never
-directly against original evidence.
+X-Ways analysis is query-first. Use command-line/script routes, Export List
+metadata, reports, X-Tensions, or bounded UI queries when they can answer the
+question without materializing file contents. File-content exports are
+container-first only when bytes must leave X-Ways for external tooling.
+Metadata-only lists can be exported for planning, but copied/recovered file
+contents must first go into an X-Ways evidence file container.
 
 ## Requirements
 

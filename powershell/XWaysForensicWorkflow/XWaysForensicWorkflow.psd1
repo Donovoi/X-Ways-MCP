@@ -14,6 +14,7 @@
         'Select-XwfBestPractice',
         'Test-XwfManualGate',
         'Test-XwfForensicAction',
+        'New-XwfQueryFirstUsagePatternPlan',
         'New-XwfContainerExportPlan',
         'New-XwfUsagePatternPlan'
     )
