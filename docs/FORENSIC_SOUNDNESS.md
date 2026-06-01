@@ -7,13 +7,15 @@ X-Ways.
 
 1. Check the local/current X-Ways manual before deciding the action.
 2. Record a contemporaneous note before and after each action.
-3. Never modify original evidence.
-4. Do not export file contents to an ordinary filesystem folder first.
-5. Put selected file contents into an X-Ways evidence file container before
+3. Each note must record who, what, why, when, how, the SOP or best-practice
+   source followed, and why that source was selected.
+4. Never modify original evidence.
+5. Do not export file contents to an ordinary filesystem folder first.
+6. Put selected file contents into an X-Ways evidence file container before
    external parsing or parallel analysis.
-6. Metadata-only lists can be exported separately, but they must not copy file
+7. Metadata-only lists can be exported separately, but they must not copy file
    contents.
-7. Derived working copies may be created only from the container, not directly
+8. Derived working copies may be created only from the container, not directly
    from original evidence.
 
 ## Manual Backing
@@ -82,3 +84,6 @@ New-XwfUsagePatternPlan -RunRoot $run.run_root -ContainerPath '<container-or-mou
 
 The module writes JSONL and Markdown contemporaneous notes under the run
 workspace. Detailed case facts stay local.
+
+Use `Select-XwfBestPractice` to attach current public SOP/best-practice sources
+to the note and record why those sources were selected.

@@ -10,6 +10,8 @@
     FunctionsToExport = @(
         'New-XwfForensicRun',
         'Add-XwfContemporaneousNote',
+        'Get-XwfBestPracticeCatalog',
+        'Select-XwfBestPractice',
         'Test-XwfManualGate',
         'Test-XwfForensicAction',
         'New-XwfContainerExportPlan',

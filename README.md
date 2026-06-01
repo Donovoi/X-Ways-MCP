@@ -34,6 +34,8 @@ specific in-process gap and document the API provenance for future runs.
   volume snapshot refinement first, isolated worker cases only as fallback.
 - Provide a reusable PowerShell guardrail module for container-first exports,
   manual/action gates, and contemporaneous notes.
+- Maintain a generic best-practice catalog so notes can record which
+  jurisdiction/SOP guidance was followed and why.
 
 ## Safety Model
 
@@ -189,6 +191,8 @@ See [docs/XTENSION_BRIDGE.md](docs/XTENSION_BRIDGE.md) for the generated
 X-Tension bridge workflow.
 See [docs/FORENSIC_SOUNDNESS.md](docs/FORENSIC_SOUNDNESS.md) for the
 container-first export policy and reusable PowerShell module.
+See [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) for the public
+best-practice catalog and selection workflow.
 
 ## XWFIM Validation Example
 

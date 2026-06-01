@@ -162,6 +162,10 @@ that need X-Ways output:
 
 - `New-XwfForensicRun`: creates a run workspace with notes, plans, containers,
   derived output, and reports folders.
+- `Get-XwfBestPracticeCatalog`: loads the local generic catalog of public
+  forensic guidance sources.
+- `Select-XwfBestPractice`: selects catalog sources by jurisdiction and action
+  theme, and returns the rationale for using them.
 - `Test-XwfManualGate`: checks the local manual cache for required terms before
   an action is approved.
 - `Test-XwfForensicAction`: rejects actions that would modify original evidence
