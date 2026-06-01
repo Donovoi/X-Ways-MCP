@@ -1,7 +1,7 @@
 # Forensic Soundness
 
-This project uses a container-first workflow for file-content exports from
-X-Ways.
+This project uses a query-first workflow for X-Ways. File-content exports are
+container-first only when bytes must leave X-Ways for external tooling.
 
 ## Rules
 
@@ -10,13 +10,15 @@ X-Ways.
 3. Each note must record who, what, why, when, how, the SOP or best-practice
    source followed, and why that source was selected.
 4. Never modify original evidence.
-5. Do not export file contents to an ordinary filesystem folder first.
-6. Put selected file contents into an X-Ways evidence file container before
+5. Prefer X-Ways command line, scripts, saved settings, X-Tensions, Export List
+   metadata, reports, and bounded UI queries before materializing file contents.
+6. Do not export file contents to an ordinary filesystem folder first.
+7. Put selected file contents into an X-Ways evidence file container before
    external parsing or parallel analysis.
-7. Metadata-only lists can be exported separately, but they must not copy file
+8. Metadata-only lists can be exported separately, but they must not copy file
    contents.
-8. Derived working copies may be created only from the container, not directly
-   from original evidence.
+9. Derived working copies may be created only from X-Ways query output, a
+   container, or a container-derived copy, not directly from original evidence.
 
 ## Manual Backing
 
@@ -36,6 +38,9 @@ The local manual cache currently supports these workflow decisions:
 - Export List can export selected directory-browser metadata to TSV, HTML, or
   XML. Its optional "copy files off disk/image" behavior is not approved for this
   workflow unless the output is a container-first route.
+- X-Ways command-line/script routes, X-Tensions, Directory Browser metadata, and
+  event/search-hit/case-report outputs should be used first when they can answer
+  the investigative question without materializing bytes.
 - Recover/Copy documents copied/recovered files in `copylog.html` or
   `copylog.txt`, but Recover/Copy to an ordinary filesystem folder is not the
   first export target for file contents.
@@ -56,7 +61,15 @@ Start a guarded run:
 $run = New-XwfForensicRun -CaseRoot '<local-case-workspace>' -RunName 'usage-pattern-analysis'
 ```
 
-Create a container-first export plan:
+Create a query-first usage-pattern plan:
+
+```powershell
+$queryPlan = New-XwfQueryFirstUsagePatternPlan `
+  -RunRoot $run.run_root `
+  -Purpose 'Use X-Ways query surfaces to build per-machine/per-user usage patterns before materializing file contents.'
+```
+
+Create a container-first export plan only if file bytes must leave X-Ways:
 
 ```powershell
 $exportPlan = New-XwfContainerExportPlan `

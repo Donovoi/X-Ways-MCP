@@ -234,9 +234,10 @@ function New-XwfForensicRun {
         safety_policy = @(
             'Manual gate before action',
             'No original evidence modification',
+            'Query X-Ways first before materializing file contents',
             'No file-content export outside an X-Ways evidence file container',
             'Contemporaneous notes for every decision and action',
-            'Derived analysis reads from containers or container-derived copies only'
+            'Derived analysis reads from X-Ways query output, containers, or container-derived copies only'
         )
     }
 
@@ -423,7 +424,7 @@ function Test-XwfForensicAction {
         [Parameter(Mandatory)]
         [string]$Action,
 
-        [ValidateSet('NotesOnly', 'MetadataOnly', 'Container', 'FileContent', 'DerivedFromContainer')]
+        [ValidateSet('NotesOnly', 'QueryOnly', 'MetadataOnly', 'Container', 'FileContent', 'DerivedFromContainer')]
         [string]$OutputKind = 'NotesOnly',
 
         [string]$ManualReference = '',
@@ -469,6 +470,10 @@ function Test-XwfForensicAction {
         $warnings.Add('Metadata-only exports are allowed only for listings or reports; do not copy file contents through this route.')
     }
 
+    if ($OutputKind -eq 'QueryOnly') {
+        $warnings.Add('Query-only actions are preferred when X-Ways command line, scripts, X-Tensions, Export List metadata, or bounded UI can answer without materializing file contents.')
+    }
+
     if ($UsesUiFallback) {
         $warnings.Add('UI fallback requires bounded steps, visible setting confirmation, and contemporaneous notes before and after each action.')
     }
@@ -495,6 +500,161 @@ function Test-XwfForensicAction {
         required_next_actions = @($required)
         manual_reference = $ManualReference
         container_path = $ContainerPath
+    }
+}
+
+function New-XwfQueryFirstUsagePatternPlan {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$RunRoot,
+
+        [Parameter(Mandatory)]
+        [string]$Purpose,
+
+        [string]$ManualCachePath = '',
+
+        [int]$MaxWorkers = [Math]::Max(1, [Environment]::ProcessorCount - 1),
+
+        [string]$NotebookPath = '',
+
+        [switch]$AllowUiFallback
+    )
+
+    $resolvedRunRoot = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($RunRoot)
+    $plansDir = Join-Path $resolvedRunRoot 'plans'
+    New-Item -ItemType Directory -Path $plansDir -Force | Out-Null
+
+    $manualGate = Test-XwfManualGate `
+        -Query 'Directory Browser Export List X-Tensions API Scripts Case Log volume snapshot metadata event list' `
+        -RequiredTerms @('Directory Browser', 'Export List', 'X-Tensions API', 'Scripts', 'Case Log', 'volume snapshot') `
+        -ManualCachePath $ManualCachePath
+
+    $bestPractices = Select-XwfBestPractice `
+        -Theme @('analysis', 'documentation', 'reproducibility', 'tool_validation', 'preservation') `
+        -Reason 'Plan per-machine/per-user usage-pattern analysis using X-Ways query surfaces before materializing any file contents.'
+
+    $actionGate = Test-XwfForensicAction `
+        -Action 'Plan query-first per-machine per-user usage-pattern analysis' `
+        -OutputKind 'QueryOnly' `
+        -ManualReference 'xways-manual.txt:908-916 Directory Browser; 2892-2924 Export List; 6760-6918 Evidence File Containers only if bytes must leave X-Ways; 7.2 Scripts; 7.3 X-Tensions API; 4760-4785 Case Log' `
+        -UsesUiFallback:$AllowUiFallback `
+        -ManualGatePassed:($manualGate.allowed)
+
+    $planId = '{0}-query-first-usage-pattern-analysis' -f (Get-Date -Format 'yyyyMMdd-HHmmss')
+    $planJson = Join-Path $plansDir "$planId.json"
+    $planMd = Join-Path $plansDir "$planId.md"
+
+    $querySurfaces = @(
+        'Headless command line and scripts with saved settings where the manual supports the action',
+        'X-Ways Directory Browser and Export List for volume-snapshot metadata, columns, filters, events, and search-hit metadata',
+        'Generated X-Tension for in-process enumeration of case, evidence object, volume snapshot, metadata, events, tags, comments, and search-hit state',
+        'Bounded UI fallback only when headless and X-Tension routes cannot safely answer the query'
+    )
+
+    $materializationRules = @(
+        'Do not materialize file contents if metadata, event lists, search hits, X-Tension output, or X-Ways reports answer the question.',
+        'If external parsers need bytes from registry hives, browser databases, event logs, or similar artifacts, add those files to an X-Ways evidence file container first.',
+        'Export List is approved for metadata/listing output; its file-copy option is not approved unless routed through the container policy.',
+        'Parallel processing applies to independent query batches, evidence objects, X-Tension workers, or container-derived parsing, not to competing writes against the same evidence object.'
+    )
+
+    $artifactQuestions = @(
+        'Which machines are represented and what OS/install metadata is visible?',
+        'Which users are represented on each machine?',
+        'What logon, execution, browser, document, shell, removable-media, network, and timeline signals are visible?',
+        'Which signals are derived from X-Ways metadata/events versus materialized artifact parsing?',
+        'What gaps remain because an artifact is encrypted, unavailable, not parsed, or would require file-content materialization?'
+    )
+
+    $plan = [ordered]@{
+        created_utc = (Get-Date).ToUniversalTime().ToString('o')
+        purpose = $Purpose
+        output_policy = 'query-first-no-file-content-materialization'
+        allowed = ($manualGate.allowed -and $actionGate.allowed)
+        manual_gate = $manualGate
+        action_gate = $actionGate
+        max_workers = $MaxWorkers
+        allow_ui_fallback = [bool]$AllowUiFallback
+        xways_manual_references = @(
+            'Directory Browser and volume snapshot: xways-manual.txt lines 908-916 and related column/filter sections',
+            'Export List metadata: xways-manual.txt lines 2892-2924, manual pages 60-61',
+            'Scripts: xways-manual.txt Appendix B and section 7.2',
+            'X-Tensions API: X-Ways manual section 7.3 and local API documentation when available',
+            'Case Log: xways-manual.txt lines 4760-4785, manual page 99',
+            'Evidence File Containers only if file bytes must leave X-Ways: xways-manual.txt lines 6760-6918'
+        )
+        query_surfaces = $querySurfaces
+        materialization_rules = $materializationRules
+        artifact_questions = $artifactQuestions
+        best_practice_references = @($bestPractices.selected)
+        best_practice_selection_rationale = $bestPractices.selection_rationale
+        output = [ordered]@{
+            reports_root = Join-Path $resolvedRunRoot 'reports'
+            query_results_root = Join-Path $resolvedRunRoot 'query-results'
+            machine_user_report = 'machine-user-usage-patterns.md'
+            structured_events = 'machine-user-usage-events.jsonl'
+        }
+    }
+
+    New-Item -ItemType Directory -Path $plan.output.query_results_root -Force | Out-Null
+    New-Item -ItemType Directory -Path $plan.output.reports_root -Force | Out-Null
+    $plan | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $planJson -Encoding UTF8
+
+    $md = @(
+        '# Query-First Usage Pattern Analysis Plan'
+        ''
+        "Created UTC: $($plan.created_utc)"
+        ''
+        "Purpose: $Purpose"
+        ''
+        '## Query Surfaces'
+        ''
+        ($querySurfaces | ForEach-Object { "- $_" }) -join "`r`n"
+        ''
+        '## Materialization Rules'
+        ''
+        ($materializationRules | ForEach-Object { "- $_" }) -join "`r`n"
+        ''
+        '## Questions'
+        ''
+        ($artifactQuestions | ForEach-Object { "- $_" }) -join "`r`n"
+        ''
+        "Plan JSON: $planJson"
+    ) -join "`r`n"
+    $md | Set-Content -LiteralPath $planMd -Encoding UTF8
+
+    if (-not $NotebookPath) {
+        $NotebookPath = Join-Path $resolvedRunRoot 'notes\contemporaneous-notes.jsonl'
+    }
+
+    if (Test-Path -LiteralPath (Split-Path -Parent $NotebookPath)) {
+        Add-XwfContemporaneousNote `
+            -NotebookPath $NotebookPath `
+            -Category 'plan' `
+            -Action 'Created query-first usage-pattern analysis plan' `
+            -Rationale $Purpose `
+            -ManualReference (($plan.xways_manual_references) -join '; ') `
+            -How 'Searched local manual cache, selected query-first X-Ways surfaces, and wrote JSON/Markdown plan files before any file-content materialization.' `
+            -BestPracticeReferences $bestPractices.selected `
+            -BestPracticeSelectionRationale $bestPractices.selection_rationale `
+            -SoundnessCheck @{
+                manual_gate_allowed = $manualGate.allowed
+                action_gate_allowed = $actionGate.allowed
+                file_content_materialized = $false
+                original_evidence_modified = $false
+                ui_fallback_allowed = [bool]$AllowUiFallback
+            } `
+            -Result "Plan written to $planJson" | Out-Null
+    }
+
+    return [pscustomobject]@{
+        plan_json = $planJson
+        plan_markdown = $planMd
+        allowed = $plan.allowed
+        manual_gate = $manualGate
+        action_gate = $actionGate
+        query_results_root = $plan.output.query_results_root
     }
 }
 
@@ -779,6 +939,7 @@ Export-ModuleMember -Function @(
     'Select-XwfBestPractice',
     'Test-XwfManualGate',
     'Test-XwfForensicAction',
+    'New-XwfQueryFirstUsagePatternPlan',
     'New-XwfContainerExportPlan',
     'New-XwfUsagePatternPlan'
 )

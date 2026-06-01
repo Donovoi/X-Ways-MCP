@@ -168,15 +168,22 @@ that need X-Ways output:
   theme, and returns the rationale for using them.
 - `Test-XwfManualGate`: checks the local manual cache for required terms before
   an action is approved.
-- `Test-XwfForensicAction`: rejects actions that would modify original evidence
-  or export file contents outside an X-Ways evidence file container.
+- `Test-XwfForensicAction`: prefers query-only actions and rejects actions that
+  would modify original evidence or export file contents outside an X-Ways
+  evidence file container.
+- `New-XwfQueryFirstUsagePatternPlan`: writes a manual-backed plan for answering
+  machine/user usage questions through command-line/script, Export List
+  metadata, X-Tension, report, or bounded UI query surfaces before any file
+  materialization.
 - `New-XwfContainerExportPlan`: writes a manual-backed container-first export
-  plan and contemporaneous note.
+  plan and contemporaneous note for the cases where file bytes must leave
+  X-Ways.
 - `New-XwfUsagePatternPlan`: writes a parallel analysis plan that reads from
   containers or container-derived copies only.
 
-Use this module before any X-Ways export/recover/copy step. It is not an MCP
-tool by itself; it is a repeatable local runner helper for forensic soundness.
+Use this module before any X-Ways query, export, recover, or copy step. It is
+not an MCP tool by itself; it is a repeatable local runner helper for forensic
+soundness.
 
 ## harness_init_case
 
