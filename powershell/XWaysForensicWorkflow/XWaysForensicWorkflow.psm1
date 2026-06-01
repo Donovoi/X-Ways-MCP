@@ -49,6 +49,134 @@ function Resolve-XwfManualTextPath {
     return $null
 }
 
+function Resolve-XwfRepoRoot {
+    if ($PSScriptRoot) {
+        $moduleRepoRoot = Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\..') -ErrorAction SilentlyContinue
+        if ($moduleRepoRoot) {
+            return $moduleRepoRoot.Path
+        }
+    }
+
+    $gitRoot = git rev-parse --show-toplevel 2>$null
+    if ($LASTEXITCODE -eq 0 -and $gitRoot) {
+        return ($gitRoot | Select-Object -First 1)
+    }
+
+    return (Get-Location).Path
+}
+
+function Resolve-XwfBestPracticeCatalogPath {
+    param(
+        [string]$CatalogPath = ''
+    )
+
+    if ($CatalogPath) {
+        return $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($CatalogPath)
+    }
+
+    $repoRoot = Resolve-XwfRepoRoot
+    return (Join-Path $repoRoot 'data\forensic-best-practices.json')
+}
+
+function Get-XwfBestPracticeCatalog {
+    [CmdletBinding()]
+    param(
+        [string]$CatalogPath = ''
+    )
+
+    $resolvedPath = Resolve-XwfBestPracticeCatalogPath -CatalogPath $CatalogPath
+    if (-not (Test-Path -LiteralPath $resolvedPath -PathType Leaf)) {
+        throw "Best-practice catalog not found: $resolvedPath"
+    }
+
+    $catalog = Get-Content -LiteralPath $resolvedPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    return $catalog
+}
+
+function Select-XwfBestPractice {
+    [CmdletBinding()]
+    param(
+        [string[]]$Jurisdiction = @('international', 'usa', 'united_kingdom', 'europe', 'australia'),
+
+        [string[]]$Theme = @(),
+
+        [int]$Limit = 8,
+
+        [string]$CatalogPath = '',
+
+        [string]$Reason = 'Select current public forensic guidance applicable to the planned action.'
+    )
+
+    $catalog = Get-XwfBestPracticeCatalog -CatalogPath $CatalogPath
+    $jurisdictionSet = @{}
+    foreach ($item in $Jurisdiction) {
+        if ($item) {
+            $jurisdictionSet[$item.ToLowerInvariant()] = $true
+        }
+    }
+    $themeSet = @{}
+    foreach ($item in $Theme) {
+        if ($item) {
+            $themeSet[$item.ToLowerInvariant()] = $true
+        }
+    }
+
+    $scored = @()
+    foreach ($entry in @($catalog.sources)) {
+        $score = 0
+        $entryJurisdiction = [string]$entry.jurisdiction
+        if ($jurisdictionSet.ContainsKey($entryJurisdiction.ToLowerInvariant())) {
+            $score += 10
+        }
+        if ($entryJurisdiction -eq 'international') {
+            $score += 2
+        }
+        foreach ($theme in @($entry.themes)) {
+            if ($themeSet.ContainsKey(([string]$theme).ToLowerInvariant())) {
+                $score += 4
+            }
+        }
+        if ($Theme.Count -eq 0) {
+            $score += 1
+        }
+        if ($score -gt 0) {
+            $scored += [pscustomobject]@{
+                score = $score
+                entry = $entry
+            }
+        }
+    }
+
+    $selected = $scored |
+        Sort-Object -Property @{ Expression = 'score'; Descending = $true }, @{ Expression = { $_.entry.priority }; Descending = $false } |
+        Select-Object -First ([Math]::Max(1, $Limit)) |
+        ForEach-Object {
+            $entry = $_.entry
+            [pscustomobject]@{
+                id = $entry.id
+                jurisdiction = $entry.jurisdiction
+                source_name = $entry.source_name
+                publisher = $entry.publisher
+                url = $entry.url
+                source_date = $entry.source_date
+                status = $entry.status
+                themes = @($entry.themes)
+                why_selected = $entry.why_choose
+                applicable_when = $entry.applicable_when
+            }
+        }
+
+    return [pscustomobject]@{
+        selected_at_utc = (Get-Date).ToUniversalTime().ToString('o')
+        catalog_checked_utc = $catalog.last_reviewed_utc
+        reason = $Reason
+        jurisdictions_requested = $Jurisdiction
+        themes_requested = $Theme
+        selection_rationale = 'Selected current public guidance by jurisdiction and action theme. International ISO guidance is used as the baseline; local jurisdiction guidance is added where it is relevant to evidence handling, documentation, quality, or admissibility.'
+        selected = @($selected)
+    }
+}
+
 function New-XwfForensicRun {
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -114,12 +242,17 @@ function New-XwfForensicRun {
 
     $run | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $runRoot 'run-manifest.json') -Encoding UTF8
 
+    $bestPractices = Select-XwfBestPractice -Theme @('documentation', 'chain_of_custody', 'preservation') -Reason 'Initialize forensic run notes and evidence-handling boundaries.'
+
     Add-XwfContemporaneousNote `
         -NotebookPath $notebookJsonl `
         -Category 'run' `
         -Action 'Initialized forensic run workspace' `
+        -How 'Created a dedicated local run workspace, manifest, notes, plans, containers, derived-output, and reports folders.' `
         -Rationale 'Create a reusable, container-first workflow boundary before any export or analysis.' `
         -ManualReference 'Manual gate required before X-Ways actions; specific action references are recorded per plan.' `
+        -BestPracticeReferences $bestPractices.selected `
+        -BestPracticeSelectionRationale $bestPractices.selection_rationale `
         -SoundnessCheck @{ original_evidence_modified = $false; file_content_exported = $false; container_required = $false } `
         -Result 'Workspace and notebook initialized.' | Out-Null
 
@@ -138,9 +271,23 @@ function Add-XwfContemporaneousNote {
         [Parameter(Mandatory)]
         [string]$Action,
 
+        [string]$Who = '',
+
+        [string]$What = '',
+
+        [string]$When = '',
+
+        [string]$How = '',
+
         [string]$Rationale = '',
 
         [string]$ManualReference = '',
+
+        [object[]]$SopReferences = @(),
+
+        [object[]]$BestPracticeReferences = @(),
+
+        [string]$BestPracticeSelectionRationale = '',
 
         [hashtable]$SoundnessCheck = @{},
 
@@ -155,33 +302,57 @@ function Add-XwfContemporaneousNote {
         New-Item -ItemType Directory -Path $noteDir -Force | Out-Null
     }
 
+    $timestampUtc = (Get-Date).ToUniversalTime().ToString('o')
+    if (-not $Who) { $Who = $Operator }
+    if (-not $What) { $What = $Action }
+    if (-not $When) { $When = $timestampUtc }
+    if (-not $Rationale) { $Rationale = 'Not recorded.' }
+    if (-not $How) { $How = 'Not recorded.' }
+
     $entry = [ordered]@{
-        timestamp_utc = (Get-Date).ToUniversalTime().ToString('o')
+        timestamp_utc = $timestampUtc
+        who = $Who
+        what = $What
+        when = $When
+        why = $Rationale
+        how = $How
         operator = $Operator
         category = $Category
         action = $Action
         rationale = $Rationale
         manual_reference = $ManualReference
+        sop_references = @($SopReferences)
+        best_practice_references = @($BestPracticeReferences)
+        best_practice_selection_rationale = $BestPracticeSelectionRationale
         forensic_soundness = $SoundnessCheck
         result = $Result
     }
 
-    ($entry | ConvertTo-Json -Depth 8 -Compress) + "`n" | Add-Content -LiteralPath $resolvedNotebook -Encoding UTF8
+    ($entry | ConvertTo-Json -Depth 12 -Compress) + "`n" | Add-Content -LiteralPath $resolvedNotebook -Encoding UTF8
 
     $markdownPath = [System.IO.Path]::ChangeExtension($resolvedNotebook, '.md')
     if (-not (Test-Path -LiteralPath $markdownPath)) {
         "# Contemporaneous Notes`r`n" | Set-Content -LiteralPath $markdownPath -Encoding UTF8
     }
 
-    $soundnessJson = $SoundnessCheck | ConvertTo-Json -Depth 8 -Compress
+    $soundnessJson = $SoundnessCheck | ConvertTo-Json -Depth 12 -Compress
+    $sopJson = @($SopReferences) | ConvertTo-Json -Depth 8 -Compress
+    $bestPracticeJson = @($BestPracticeReferences) | ConvertTo-Json -Depth 8 -Compress
     $block = @(
         ''
         "## $($entry.timestamp_utc) - $Category"
         ''
+        "- Who: $Who"
+        "- What: $What"
+        "- When: $When"
+        "- Why: $Rationale"
+        "- How: $How"
         "- Operator: $Operator"
         "- Action: $Action"
-        "- Rationale: $Rationale"
         "- Manual reference: $ManualReference"
+        "- SOP references: $sopJson"
+        "- Best-practice references: $bestPracticeJson"
+        "- Best-practice selection rationale: $BestPracticeSelectionRationale"
         "- Soundness check: $soundnessJson"
         "- Result: $Result"
     ) -join "`r`n"
@@ -367,6 +538,10 @@ function New-XwfContainerExportPlan {
         -RequiredTerms @('Evidence File Containers', 'Export List', 'Recover/Copy Command', 'Case Log', 'read-only') `
         -ManualCachePath $ManualCachePath
 
+    $bestPractices = Select-XwfBestPractice `
+        -Theme @('preservation', 'containerization', 'documentation', 'chain_of_custody', 'analysis') `
+        -Reason 'Plan a container-first X-Ways export and later usage-pattern analysis without exposing or altering original evidence.'
+
     $safeStem = ConvertTo-XwfSafeName $ContainerStem
     $planId = '{0}-{1}' -f (Get-Date -Format 'yyyyMMdd-HHmmss'), $safeStem
     $planJson = Join-Path $plansDir "$planId.container-export-plan.json"
@@ -396,6 +571,8 @@ function New-XwfContainerExportPlan {
             'Case Log: xways-manual.txt lines 4760-4785, manual page 99',
             'Read-only evidence handling: xways-manual.txt lines 449-455 and 4611-4617'
         )
+        best_practice_references = @($bestPractices.selected)
+        best_practice_selection_rationale = $bestPractices.selection_rationale
         required_xways_settings = [ordered]@{
             create_or_open_evidence_file_container = (-not $MetadataOnly)
             add_selected_files_to_container = (-not $MetadataOnly)
@@ -455,6 +632,9 @@ function New-XwfContainerExportPlan {
             -Action 'Created container-first export plan' `
             -Rationale $Purpose `
             -ManualReference (($plan.xways_manual_references) -join '; ') `
+            -How 'Searched local manual cache, applied container-first action gate, and wrote JSON/Markdown plan files before any export action.' `
+            -BestPracticeReferences $bestPractices.selected `
+            -BestPracticeSelectionRationale $bestPractices.selection_rationale `
             -SoundnessCheck @{
                 manual_gate_allowed = $manualGate.allowed
                 action_gate_allowed = $actionGate.allowed
@@ -492,6 +672,10 @@ function New-XwfUsagePatternPlan {
     $plansDir = Join-Path $resolvedRunRoot 'plans'
     New-Item -ItemType Directory -Path $plansDir -Force | Out-Null
 
+    $bestPractices = Select-XwfBestPractice `
+        -Theme @('analysis', 'documentation', 'reproducibility', 'tool_validation') `
+        -Reason 'Plan per-machine/per-user usage-pattern analysis after containerization.'
+
     $actionGate = Test-XwfForensicAction `
         -Action 'Plan per-machine per-user usage-pattern analysis' `
         -OutputKind 'DerivedFromContainer' `
@@ -519,6 +703,8 @@ function New-XwfUsagePatternPlan {
         action_gate = $actionGate
         max_workers = $MaxWorkers
         artifact_families = $artifactFamilies
+        best_practice_references = @($bestPractices.selected)
+        best_practice_selection_rationale = $bestPractices.selection_rationale
         output = [ordered]@{
             derived_root = Join-Path $resolvedRunRoot 'derived-from-containers'
             reports_root = Join-Path $resolvedRunRoot 'reports'
@@ -566,6 +752,9 @@ function New-XwfUsagePatternPlan {
             -Action 'Created usage-pattern analysis plan' `
             -Rationale 'Plan parallel per-machine/per-user analysis after container-first export.' `
             -ManualReference 'Container-first export plan and local X-Ways manual references.' `
+            -How 'Confirmed the analysis source is a container path, selected analysis/documentation guidance, and wrote a local plan for parallel parsing.' `
+            -BestPracticeReferences $bestPractices.selected `
+            -BestPracticeSelectionRationale $bestPractices.selection_rationale `
             -SoundnessCheck @{
                 action_gate_allowed = $actionGate.allowed
                 source_is_container = [bool]$ContainerPath
@@ -586,6 +775,8 @@ function New-XwfUsagePatternPlan {
 Export-ModuleMember -Function @(
     'New-XwfForensicRun',
     'Add-XwfContemporaneousNote',
+    'Get-XwfBestPracticeCatalog',
+    'Select-XwfBestPractice',
     'Test-XwfManualGate',
     'Test-XwfForensicAction',
     'New-XwfContainerExportPlan',
