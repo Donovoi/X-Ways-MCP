@@ -30,3 +30,17 @@ memory-based answer is current.
 Never use evidence names, keys, recovered filenames, case paths, screenshots,
 or case facts as web queries. Manual refreshes must be generic and limited to
 official or upstream sources.
+
+## Action Gate
+
+Before any X-Ways action that changes case state, creates derived output, or
+exports data, record:
+
+- the manual section or local manual line reference used for the decision
+- whether the action can modify original evidence or only the case/snapshot
+- whether file contents are being exported
+- whether the destination is an X-Ways evidence file container
+- the contemporaneous note location
+
+Use the PowerShell module in
+`powershell/XWaysForensicWorkflow` to make this check repeatable.

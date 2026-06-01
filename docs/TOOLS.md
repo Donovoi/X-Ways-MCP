@@ -155,6 +155,25 @@ Builds a command array for launching X-Ways without executing it.
 
 Launches only when `XWAYS_MCP_ALLOW_EXECUTE=1` and `confirm=true`.
 
+## PowerShell Forensic Workflow Module
+
+`powershell/XWaysForensicWorkflow` provides reusable local guardrails for runs
+that need X-Ways output:
+
+- `New-XwfForensicRun`: creates a run workspace with notes, plans, containers,
+  derived output, and reports folders.
+- `Test-XwfManualGate`: checks the local manual cache for required terms before
+  an action is approved.
+- `Test-XwfForensicAction`: rejects actions that would modify original evidence
+  or export file contents outside an X-Ways evidence file container.
+- `New-XwfContainerExportPlan`: writes a manual-backed container-first export
+  plan and contemporaneous note.
+- `New-XwfUsagePatternPlan`: writes a parallel analysis plan that reads from
+  containers or container-derived copies only.
+
+Use this module before any X-Ways export/recover/copy step. It is not an MCP
+tool by itself; it is a repeatable local runner helper for forensic soundness.
+
 ## harness_init_case
 
 Creates a `forensic-copilot`-compatible case manifest, Markdown report stub,
