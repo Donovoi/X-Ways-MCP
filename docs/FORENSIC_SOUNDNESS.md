@@ -100,3 +100,17 @@ workspace. Detailed case facts stay local.
 
 Use `Select-XwfBestPractice` to attach current public SOP/best-practice sources
 to the note and record why those sources were selected.
+
+## Query-First Usage Pattern Triage
+
+When the question can be answered from X-Ways case metadata, prefer the local
+path-string triage script before exporting files:
+
+```powershell
+.\scripts\Invoke-XwfCaseDbPathStringTriage.ps1
+```
+
+This script reads the X-Ways case database with shared-read access, uses `rg` as
+a local metadata-string prefilter, writes only sanitized findings to the report,
+and stores raw machine/user labels only in a `.local.json` alias map. It does
+not persist raw snippets and does not copy carved files or evidence contents.

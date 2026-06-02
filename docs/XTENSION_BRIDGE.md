@@ -39,6 +39,18 @@ place to wire the exact X-Tensions API callback signatures for the target X-Ways
 version. Runners must confirm the signatures from local or official API
 documentation before building.
 
+## Included Metadata Bridge
+
+`xtensions/xwf-path-export` contains a concrete metadata-only bridge for
+enumerating existing volume snapshots and reconstructing item paths. It is meant
+for query-first usage-pattern triage when command-line/report metadata is
+insufficient.
+
+The bridge does not call `XWF_Read`, does not copy file contents, and does not
+modify volume snapshot items. Its raw JSONL output is sensitive and should stay
+inside the local case workspace, then be summarized with
+`scripts/Invoke-XwfPathUsagePatternTriage.ps1`.
+
 ## Undocumented API Notes
 
 If a runner uses undocumented or locally researched API behavior, `API_NOTES.md`
