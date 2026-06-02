@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from . import __version__
+from .case_manifest import MANIFEST_SCHEMA_VERSION
 from .core import (
     discover_executables,
     fetch_public_release,
@@ -73,11 +74,19 @@ def init_case(config: HarnessConfig, task: str = "") -> dict:
         layout[key].mkdir(parents=True, exist_ok=True)
 
     manifest = {
+        "schema": MANIFEST_SCHEMA_VERSION,
+        "schema_version": MANIFEST_SCHEMA_VERSION,
         "case_name": config.case_name,
         "case_id": sanitize_case_name(config.case_name),
         "created_utc": utc_now(),
         "harness": "xways-mcp",
         "harness_version": __version__,
+        "tool_profile": {
+            "adapter": "xways-mcp",
+            "kind": "specialized_forensic_tool_adapter",
+            "coupling": "optional",
+            "manual_first": True,
+        },
         "task": task,
         "depth": config.depth,
         "evidence_os": config.evidence_os,
@@ -87,6 +96,35 @@ def init_case(config: HarnessConfig, task: str = "") -> dict:
             "input_read_roots": [str(resolve(path)) for path in config.input_roots],
             "compute_staging_root": str(resolve(config.staging_root)),
             "output_report_root": str(resolve(config.output_root)),
+            "network_policy": "public_docs_only",
+            "remote_or_cloud_compute": "prohibited",
+        },
+        "privacy_policy": {
+            "case_facts_to_internet": False,
+            "alias_maps_local_only": True,
+            "redaction_required_before_publication": True,
+            "secret_plaintext_lane": "local_only",
+        },
+        "manual_gate": {
+            "required": True,
+            "status": "pending_for_xways_actions",
+        },
+        "audit_policy": {
+            "audit_jsonl": True,
+            "contemporaneous_notes": True,
+            "status_files_for_blockers": True,
+        },
+        "alias_map_policy": {
+            "local_only": True,
+            "gitignored_suffix": ".local.json",
+            "return_alias_map_to_agent": False,
+        },
+        "integrations": {
+            "forensic_copilot": {
+                "compatible": True,
+                "required": False,
+                "role": "consumer_of_status_artifacts_and_sanitized_reports",
+            },
         },
         "paths": {key: str(value) for key, value in layout.items()},
     }

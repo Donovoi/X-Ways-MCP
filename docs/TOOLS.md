@@ -5,6 +5,25 @@
 Returns platform, Python version, configured search roots, and execution safety
 status.
 
+## case_run_manifest_template
+
+Returns the generic `forensic-case-run-manifest/v1` template and schema. This is
+the loose integration contract for `forensic-copilot` or any other examiner
+harness that wants to consume X-Ways-MCP outputs without depending on X-Ways-MCP
+for every case.
+
+## redaction_status
+
+Checks a local file for common case-sensitive patterns and returns counts only.
+Use this before publishing reports, docs, or issue/PR text.
+
+## redact_local_file
+
+Reads a local file and writes a sanitized local copy. This tool is file-in/file-
+out so raw case text does not need to be passed through MCP arguments. If an
+alias map is requested, it is written as a local-only `.local.json` file and
+must not be published.
+
 ## public_xways_release
 
 Fetches public X-Ways release information from X-Ways pages. This is only a
@@ -129,6 +148,28 @@ whether the end-of-central-directory marker is missing.
 ## hash_file
 
 Hashes a file with algorithms such as `md5,sha1,sha256`.
+
+## build_case_db_path_string_triage_command
+
+Builds, but does not run, the PowerShell command for
+`Invoke-XwfCaseDbPathStringTriage.ps1`. The script reads X-Ways case database
+metadata strings, writes sanitized machine/user usage-pattern reports, and keeps
+raw labels in a local-only alias map.
+
+## run_case_db_path_string_triage
+
+Runs the same local triage only when `XWAYS_MCP_ALLOW_CASE_READ=1` and
+`confirm=true`. This gate is separate from X-Ways process launch.
+
+## build_path_usage_pattern_triage_command
+
+Builds, but does not run, the sanitizer command for metadata-only
+`XwfPathExport` JSONL output.
+
+## run_path_usage_pattern_triage
+
+Runs the X-Tension JSONL sanitizer only when the case-read gate is enabled and
+confirmed.
 
 ## create_workspace
 
