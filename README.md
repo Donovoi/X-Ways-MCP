@@ -37,6 +37,8 @@ specific in-process gap and document the API provenance for future runs.
 - Prefer query-first X-Ways analysis through command-line/script, Export List
   metadata, X-Tensions, reports, or bounded UI before materializing file
   contents.
+- Run read-only X-Ways case database usage-pattern triage from metadata strings,
+  with sanitized reports and local-only alias maps.
 - Maintain a generic best-practice catalog so notes can record which
   jurisdiction/SOP guidance was followed and why.
 
@@ -125,6 +127,16 @@ python -m xways_mcp.harness xwfim-preflight `
   --evidence-os Windows `
   --evidence-mode portable-tooling
 ```
+
+Run a local query-first usage-pattern triage over an existing X-Ways case
+database without exporting file contents:
+
+```powershell
+.\scripts\Invoke-XwfCaseDbPathStringTriage.ps1
+```
+
+The script writes a sanitized report, structured JSON, and a sensitive
+local-only alias map under the local case workspace reports folder.
 
 Build disposable synthetic fixtures for every supported evidence OS:
 
