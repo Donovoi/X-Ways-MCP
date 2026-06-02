@@ -39,6 +39,9 @@ specific in-process gap and document the API provenance for future runs.
   contents.
 - Run read-only X-Ways case database usage-pattern triage from metadata strings,
   with sanitized reports and local-only alias maps.
+- Provide a loose case-run manifest contract so examiner harnesses such as
+  `Donovoi/forensic-copilot` can consume sanitized X-Ways outputs without
+  becoming tightly coupled to this repo.
 - Maintain a generic best-practice catalog so notes can record which
   jurisdiction/SOP guidance was followed and why.
 
@@ -195,6 +198,8 @@ Configure your MCP client with:
 See [docs/TOOLS.md](docs/TOOLS.md) for details.
 See [docs/FORENSIC_COPILOT.md](docs/FORENSIC_COPILOT.md) for integration with
 `Donovoi/forensic-copilot`.
+See [docs/INTEGRATION_CONTRACT.md](docs/INTEGRATION_CONTRACT.md) for the loose
+adapter contract and shared case-run manifest.
 See [docs/TEST_ENVIRONMENTS.md](docs/TEST_ENVIRONMENTS.md) for disposable
 synthetic fixture testing.
 See [docs/MANUAL_FIRST.md](docs/MANUAL_FIRST.md) for the manual-first tooling

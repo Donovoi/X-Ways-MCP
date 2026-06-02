@@ -1,7 +1,8 @@
 # Forensic Copilot Integration
 
-This repo is designed to plug into `Donovoi/forensic-copilot` as a controlled
-tooling layer, not as a replacement for its agent loop.
+This repo is designed to plug into `Donovoi/forensic-copilot` as an optional
+controlled tooling layer, not as a replacement for its agent loop and not as a
+hard dependency.
 
 ## Layering
 
@@ -16,12 +17,18 @@ Forensic Examiner / helper agents
 
 `forensic-copilot` keeps authority, scope, evidence handling, peer review, and
 Markdown reporting. `xways-mcp` supplies repeatable X-Ways-specific tools and
-status artifacts.
+status artifacts when X-Ways is the selected adapter. Other forensic tool
+adapters can use the same manifest/status/alias-map pattern.
+
+See [INTEGRATION_CONTRACT.md](INTEGRATION_CONTRACT.md) for the generic manifest
+and loose adapter boundary.
 
 ## Compatibility Rules
 
 The harness follows these `forensic-copilot` expectations:
 
+- generic `forensic-case-run-manifest/v1` compatibility
+- optional adapter coupling rather than a required dependency
 - explicit input/read roots
 - explicit compute/staging root
 - explicit output/report root
@@ -39,6 +46,7 @@ The harness follows these `forensic-copilot` expectations:
 - parallel RVS should follow the local X-Ways manual: native distributed
   same-case processing for different evidence objects first, isolated worker
   cases only as fallback
+- local-only alias maps, with `.local.json` ignored by git
 
 ## OpenCode Flow
 

@@ -7,6 +7,8 @@ import os
 from mcp.server.fastmcp import FastMCP
 
 from . import __version__
+from .case_manifest import manifest_schema as core_manifest_schema
+from .case_manifest import manifest_template as core_manifest_template
 from .core import (
     build_xways_command,
     create_case_workspace,
@@ -34,6 +36,8 @@ from .manual import (
     search_manual_index,
 )
 from .parallel import plan_parallel_xways_jobs as core_plan_parallel_xways_jobs
+from .redaction import redact_local_file as core_redact_local_file
+from .redaction import redaction_status as core_redaction_status
 from .testenv import (
     build_testenv,
     create_testenv,
@@ -42,6 +46,10 @@ from .testenv import (
     list_testenvs,
     run_testenv,
 )
+from .triage import case_db_path_string_triage_command as core_case_db_path_string_triage_command
+from .triage import path_usage_pattern_triage_command as core_path_usage_pattern_triage_command
+from .triage import run_case_db_path_string_triage as core_run_case_db_path_string_triage
+from .triage import run_path_usage_pattern_triage as core_run_path_usage_pattern_triage
 from .xtension import (
     create_xtension_scaffold as core_create_xtension_scaffold,
     plan_xways_operation as core_plan_xways_operation,
@@ -61,6 +69,59 @@ def environment() -> str:
     data = get_environment()
     data["version"] = __version__
     return json_text(data)
+
+
+@mcp.tool()
+def case_run_manifest_template(
+    case_id: str = "CASE-001",
+    question: str = "Summarize the forensic tasking here.",
+    evidence_os: str = "unknown",
+    evidence_mode: str = "unknown",
+    adapter_name: str = "xways-mcp",
+    include_schema: bool = True,
+) -> str:
+    """Return a generic forensic case-run manifest template for loose tool-adapter integration."""
+    result = {
+        "template": core_manifest_template(
+            case_id=case_id,
+            question=question,
+            evidence_os=evidence_os,
+            evidence_mode=evidence_mode,
+            adapter_name=adapter_name,
+        ),
+        "coupling": "loose_optional_adapter_contract",
+        "usage": (
+            "Forensic copilot/harness layers can use this manifest to declare boundaries "
+            "and optional specialized tool adapters without requiring xways-mcp for every run."
+        ),
+    }
+    if include_schema:
+        result["schema"] = core_manifest_schema()
+    return json_text(result)
+
+
+@mcp.tool()
+def redact_local_file(
+    input_path: str,
+    output_path: str = "",
+    alias_map_path: str = "",
+    include_alias_map: bool = False,
+) -> str:
+    """Redact a local file to another local file without passing case text through MCP."""
+    return json_text(
+        core_redact_local_file(
+            input_path=input_path,
+            output_path=output_path or None,
+            alias_map_path=alias_map_path or None,
+            include_alias_map=include_alias_map,
+        )
+    )
+
+
+@mcp.tool()
+def redaction_status(path: str) -> str:
+    """Report whether a local file appears to contain common case-sensitive patterns."""
+    return json_text(core_redaction_status(path))
 
 
 @mcp.tool()
@@ -229,6 +290,82 @@ def hash_file(path: str, algorithms: str = "sha256") -> str:
     """Hash a file using comma-separated algorithms such as md5,sha1,sha256."""
     algos = [item.strip() for item in algorithms.split(",") if item.strip()]
     return json_text(core_hash_file(path, algos or ("sha256",)))
+
+
+@mcp.tool()
+def build_case_db_path_string_triage_command(
+    search_root: str = "",
+    output_root: str = "",
+    throttle_limit: int = 8,
+    max_matches_per_file: int = 3000,
+) -> str:
+    """Build, but do not run, the local X-Ways case-DB path-string triage PowerShell command."""
+    return json_text(
+        core_case_db_path_string_triage_command(
+            search_root=search_root,
+            output_root=output_root,
+            throttle_limit=throttle_limit,
+            max_matches_per_file=max_matches_per_file,
+        )
+    )
+
+
+@mcp.tool()
+def build_path_usage_pattern_triage_command(
+    jsonl_path: str,
+    report_directory: str,
+    run_id: str = "",
+) -> str:
+    """Build, but do not run, the local sanitizer command for XwfPathExport JSONL output."""
+    return json_text(
+        core_path_usage_pattern_triage_command(
+            jsonl_path=jsonl_path,
+            report_directory=report_directory,
+            run_id=run_id,
+        )
+    )
+
+
+@mcp.tool()
+def run_case_db_path_string_triage(
+    search_root: str = "",
+    output_root: str = "",
+    throttle_limit: int = 8,
+    max_matches_per_file: int = 3000,
+    confirm: bool = False,
+    timeout: int = 3600,
+) -> str:
+    """Run local case-DB path-string triage only when XWAYS_MCP_ALLOW_CASE_READ=1 and confirm=true."""
+    return json_text(
+        core_run_case_db_path_string_triage(
+            search_root=search_root,
+            output_root=output_root,
+            throttle_limit=throttle_limit,
+            max_matches_per_file=max_matches_per_file,
+            confirm=confirm,
+            timeout=timeout,
+        )
+    )
+
+
+@mcp.tool()
+def run_path_usage_pattern_triage(
+    jsonl_path: str,
+    report_directory: str,
+    run_id: str = "",
+    confirm: bool = False,
+    timeout: int = 3600,
+) -> str:
+    """Run local X-Tension JSONL usage-pattern sanitizer only when case-read gate is enabled."""
+    return json_text(
+        core_run_path_usage_pattern_triage(
+            jsonl_path=jsonl_path,
+            report_directory=report_directory,
+            run_id=run_id,
+            confirm=confirm,
+            timeout=timeout,
+        )
+    )
 
 
 @mcp.tool()

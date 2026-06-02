@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Donovoi/X-Ways-MCP/schemas/forensic-case-run-manifest-v1.json",
+  "title": "Forensic Case Run Manifest",
+  "type": "object",
+  "required": [
+    "schema",
+    "case",
+    "question",
+    "boundaries",
+    "privacy",
+    "tool_adapters",
+    "outputs",
+    "notes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "forensic-case-run-manifest/v1"
+    },
+    "created_utc": {
+      "type": "string"
+    },
+    "case": {
+      "type": "object",
+      "required": [
+        "case_id",
+        "depth",
+        "evidence_os",
+        "evidence_mode"
+      ]
+    },
+    "question": {
+      "type": "object",
+      "required": [
+        "summary"
+      ]
+    },
+    "boundaries": {
+      "type": "object",
+      "required": [
+        "input_read_roots",
+        "compute_staging_root",
+        "output_report_root"
+      ]
+    },
+    "privacy": {
+      "type": "object",
+      "required": [
+        "case_facts_to_internet",
+        "alias_maps_local_only"
+      ]
+    },
+    "tool_adapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "kind",
+          "enabled",
+          "coupling"
+        ]
+      }
+    },
+    "outputs": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

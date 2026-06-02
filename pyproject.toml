@@ -27,6 +27,7 @@ dev = [
 xways-mcp = "xways_mcp.server:main"
 xways-harness = "xways_mcp.harness:main"
 xways-testenv = "xways_mcp.testenv:main"
+xways-triage = "xways_mcp.triage:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

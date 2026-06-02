@@ -1,0 +1,56 @@
+{
+  "schema": "forensic-case-run-manifest/v1",
+  "created_utc": "YYYY-MM-DDTHH:MM:SSZ",
+  "case": {
+    "case_id": "CASE-001",
+    "depth": "triage",
+    "evidence_os": "unknown",
+    "evidence_mode": "unknown",
+    "timezone": "local timezone pending"
+  },
+  "question": {
+    "summary": "Summarize the forensic tasking here.",
+    "time_window": {
+      "start": "",
+      "end": "",
+      "basis": "pending"
+    },
+    "users_or_hosts_of_interest": []
+  },
+  "boundaries": {
+    "input_read_roots": [],
+    "compute_staging_root": "artifacts",
+    "output_report_root": "reports",
+    "network_policy": "public_docs_only",
+    "remote_or_cloud_compute": "prohibited"
+  },
+  "privacy": {
+    "case_facts_to_internet": false,
+    "alias_maps_local_only": true,
+    "redaction_required_before_publication": true,
+    "secret_plaintext_lane": "local_only"
+  },
+  "tool_adapters": [
+    {
+      "name": "xways-mcp",
+      "kind": "specialized_forensic_tool_adapter",
+      "enabled": false,
+      "coupling": "optional",
+      "manual_first": true,
+      "execution_allowed": false,
+      "status": "planned"
+    }
+  ],
+  "outputs": {
+    "report_markdown": "",
+    "status_dir": "",
+    "audit_jsonl": "",
+    "alias_map_local": "",
+    "structured_findings": ""
+  },
+  "notes": {
+    "sop_basis": [],
+    "contemporaneous_notes": "",
+    "limitations": []
+  }
+}
