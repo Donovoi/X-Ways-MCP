@@ -16,7 +16,13 @@
         'Test-XwfForensicAction',
         'New-XwfQueryFirstUsagePatternPlan',
         'New-XwfContainerExportPlan',
-        'New-XwfUsagePatternPlan'
+        'New-XwfUsagePatternPlan',
+        'Get-XwfPortableExecutable',
+        'Get-XwfPeExternalFunction',
+        'Get-XwfPeExport',
+        'Get-XwfApiString',
+        'Compare-XwfExternalSurface',
+        'Export-XwfExternalSurfaceReport'
     )
     CmdletsToExport = @()
     VariablesToExport = @()

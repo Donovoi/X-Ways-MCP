@@ -95,6 +95,19 @@ Plan parallel usage-pattern analysis after the container exists:
 New-XwfUsagePatternPlan -RunRoot $run.run_root -ContainerPath '<container-or-mounted-container-source>'
 ```
 
+Inventory a local X-Ways executable surface without executing it:
+
+```powershell
+Compare-XwfExternalSurface `
+  -XwfRoot '<xways-program-root>' `
+  -OutputDirectory '<local-report-folder>'
+```
+
+This PE import/export/string analysis is approved for X-Ways program files you
+own. If the same parser is used on evidence-derived files, the input must be a
+container or container-derived copy and the run notes must record the source
+container, hashes, parser command, and output paths.
+
 The module writes JSONL and Markdown contemporaneous notes under the run
 workspace. Detailed case facts stay local.
 

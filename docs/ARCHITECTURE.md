@@ -13,6 +13,8 @@ The Python server exposes tools that can run without loading code into X-Ways:
   choosing commands, APIs, distributed modes, X-Tensions, or UI fallback
 - discover portable X-Ways, WinHex, X-Ways Imager, and XWFIM executables
 - validate XWFIM download caches and catch truncated ZIPs
+- inventory X-Ways executable imports, delay imports, exports, and API-looking
+  strings without executing the binaries
 - hash evidence and downloaded packages
 - create repeatable case workspaces
 - inventory mounted folders or exported evidence trees
@@ -96,6 +98,9 @@ Candidate in-process capabilities:
 Undocumented API usage is allowed only as a local, version-bound bridge decision:
 record symbol provenance, calling convention assumptions, X-Ways version, failure
 behavior, and why no documented/headless route was sufficient.
+`Compare-XwfExternalSurface` can supply the executable hash, exported `XWF_*`
+functions, callback string evidence, and undocumented-looking string candidates
+for those bridge notes.
 
 ## Phase 3: Workflow Automation
 

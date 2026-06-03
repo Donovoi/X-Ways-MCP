@@ -44,3 +44,9 @@ exports data, record:
 
 Use the PowerShell module in
 `powershell/XWaysForensicWorkflow` to make this check repeatable.
+
+For X-Tension API or undocumented-symbol investigations, also record the
+documented API reference set used for comparison and the local executable hash.
+`Compare-XwfExternalSurface` writes that comparison for X-Ways program files
+without executing the binary; non-exported string clues still require xref
+confirmation before use.

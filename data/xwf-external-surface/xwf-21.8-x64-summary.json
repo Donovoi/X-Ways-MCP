@@ -1,0 +1,76 @@
+{
+  "schema": "xwf-external-surface-reference/v1",
+  "product": "X-Ways Forensics / WinHex",
+  "version": "21.8",
+  "executable_name": "winhexb64.exe",
+  "equivalent_executable_names": [
+    "xwb64.exe"
+  ],
+  "architecture": "x64",
+  "sha256": "5d357bdd35a9c6d9cc1564f68430b7ec7a49fc824d1b6a501f42a7fe805358d1",
+  "import_count": 613,
+  "xwf_export_count": 77,
+  "import_dlls": {
+    "ADVAPI32.DLL": 36,
+    "COMCTL32.DLL": 7,
+    "COMDLG32.DLL": 5,
+    "GDI32.DLL": 62,
+    "KERNEL32.DLL": 255,
+    "MSIMG32.DLL": 3,
+    "MSVCRT.DLL": 2,
+    "OLEAUT32.DLL": 3,
+    "POWRPROF.DLL": 1,
+    "SETUPAPI.DLL": 4,
+    "SHELL32.DLL": 14,
+    "USER32.DLL": 204,
+    "VERSION.DLL": 1,
+    "WINHTTP.DLL": 10,
+    "WINMM.DLL": 1,
+    "WINSPOOL.DRV": 5
+  },
+  "documented_xwf_function_count": 85,
+  "documented_xt_callback_count": 15,
+  "documented_xwf_missing_exports": [
+    "XWF_AddSearchHit",
+    "XWF_DeleteEvObj",
+    "XWF_GetDriveInfo",
+    "XWF_GetSearchHit",
+    "XWF_SetItemDataRuns",
+    "XWF_SetItemName",
+    "XWF_SetSearchHit",
+    "XWF_Write"
+  ],
+  "xt_callbacks_found": [
+    "XT_Init",
+    "XT_Done",
+    "XT_About",
+    "XT_Prepare",
+    "XT_Finalize",
+    "XT_ProcessItem",
+    "XT_ProcessItemEx",
+    "XT_PrepareSearch",
+    "XT_ProcessSearchHit",
+    "XT_View",
+    "XT_ReleaseMem",
+    "XT_FileIO",
+    "XT_SectorIOInit",
+    "XT_SectorIO",
+    "XT_SectorIODone"
+  ],
+  "undocumented_looking_candidates": [
+    {
+      "name": "XWF_EDB",
+      "location": "winhexb64.exe@0x4f834c",
+      "assessment": "Bare string, not documented, and not exported by the 21.8 x64 executable; plausible undocumented clue, not proven callable."
+    },
+    {
+      "name": "XT_error",
+      "location": "winhexb64.exe@0x590e5a",
+      "assessment": "Appears as part of XT_error.log; treat as a log filename unless xrefs prove otherwise."
+    }
+  ],
+  "source_notes": [
+    "PE import/export parsing and Ghidra 12.1 headless analysis agreed on 613 imported external DLL functions.",
+    "Reference data is sanitized to avoid local user paths; rerun Compare-XwfExternalSurface for a local install."
+  ]
+}

@@ -30,6 +30,8 @@ specific in-process gap and document the API provenance for future runs.
 - Plan X-Ways operations with a headless-first, native-distributed-RVS,
   X-Tension-next, UI-last policy.
 - Generate local X-Tension bridge scaffolds with API notes and build hooks.
+- Inventory X-Ways executable imports, delay imports, `XWF_*` exports, and
+  `XWF_*`/`XT_*` string clues with documented PowerShell cmdlets.
 - Plan parallel X-Ways processing from the local manual: native distributed
   volume snapshot refinement first, isolated worker cases only as fallback.
 - Provide a reusable PowerShell guardrail module for container-first exports,
@@ -141,6 +143,19 @@ database without exporting file contents:
 The script writes a sanitized report, structured JSON, and a sensitive
 local-only alias map under the local case workspace reports folder.
 
+Compare a local X-Ways executable surface against the committed XWF/XT reference
+baseline:
+
+```powershell
+Import-Module .\powershell\XWaysForensicWorkflow\XWaysForensicWorkflow.psd1 -Force
+Compare-XwfExternalSurface `
+  -XwfRoot "<XWF_ROOT>" `
+  -OutputDirectory ".\reports\xwf-external-surface"
+```
+
+The comparison writes Markdown, JSON, and CSV artifacts for imports, delay
+imports, exports, API-like strings, and undocumented-looking string candidates.
+
 Build disposable synthetic fixtures for every supported evidence OS:
 
 ```powershell
@@ -210,6 +225,8 @@ See [docs/PARALLEL_PROCESSING.md](docs/PARALLEL_PROCESSING.md) for the
 manual-backed distributed processing policy.
 See [docs/XTENSION_BRIDGE.md](docs/XTENSION_BRIDGE.md) for the generated
 X-Tension bridge workflow.
+See [docs/EXTERNAL_SURFACE_ANALYSIS.md](docs/EXTERNAL_SURFACE_ANALYSIS.md) for
+PE import/export/string analysis and the XWF 21.8 x64 baseline.
 See [docs/FORENSIC_SOUNDNESS.md](docs/FORENSIC_SOUNDNESS.md) for the
 container-first export policy and reusable PowerShell module.
 See [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) for the public
