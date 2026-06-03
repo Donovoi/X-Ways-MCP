@@ -203,6 +203,8 @@ that need X-Ways output:
 
 - `New-XwfForensicRun`: creates a run workspace with notes, plans, containers,
   derived output, and reports folders.
+- `Add-XwfContemporaneousNote`: appends who/what/why/when/how notes, source
+  basis, action basis, and limitation records to the run's local notes log.
 - `Get-XwfBestPracticeCatalog`: loads the local generic catalog of public
   forensic guidance sources.
 - `Select-XwfBestPractice`: selects catalog sources by jurisdiction and action

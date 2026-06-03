@@ -36,11 +36,16 @@ The harness follows these `forensic-copilot` expectations:
 - status JSON for zero, blocked, partial, or failed collection steps
 - JSONL audit log for every harness action
 - broad outputs written to files, with terminal output limited to paths/counts
-- no plaintext secret dumping
+- no plaintext secrets in prompts, terminal dumps, public docs, commits, issues,
+  or reports; controlled local-only secret lanes are allowed only when the case
+  scope and handling policy authorize them
 - launch/execution remains gated separately from inventory and validation
 - tool decisions are manual-first: check the newest available official/manual
   docs or approved local docs cache before selecting commands, APIs,
   distributed processing, X-Tensions, or UI fallback
+- public release/manual refresh helpers are disabled in no-internet or
+  case-sensitive contexts unless policy allows a generic vendor-doc refresh with
+  no case facts
 - X-Ways automation prefers headless commands/scripts first, native distributed
   RVS when manual-backed, generated X-Tensions next, and UI automation last
 - parallel RVS should follow the local X-Ways manual: native distributed
