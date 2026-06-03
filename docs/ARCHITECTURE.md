@@ -101,6 +101,9 @@ behavior, and why no documented/headless route was sufficient.
 `Compare-XwfExternalSurface` can supply the executable hash, exported `XWF_*`
 functions, callback string evidence, and undocumented-looking string candidates
 for those bridge notes.
+The generated XWF API PowerShell cmdlets sit at this boundary too: they produce
+validated JSONL requests for a bridge DLL, while all native `XWF_*` calls remain
+inside X-Ways.
 
 ## Phase 3: Workflow Automation
 

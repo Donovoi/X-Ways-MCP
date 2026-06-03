@@ -235,6 +235,17 @@ that need X-Ways output:
   candidates.
 - `Export-XwfExternalSurfaceReport`: writes the comparison as Markdown, JSON,
   import CSV, export CSV, and API-string CSV artifacts.
+- `Get-XwfApiCatalog`: lists the 77 verified `XWF_*` exports and their
+  generated PowerShell cmdlet names, signatures, ordinals, RVAs, and risk flags.
+- `Test-XwfApiInvocation`: validates a planned XWF API bridge request before it
+  is queued.
+- `Invoke-XwfApiFunction`: generic request builder for a verified `XWF_*`
+  export.
+- Generated per-export wrappers such as `Get-XwfItemName`,
+  `Get-XwfEvidenceObjectProperty`, `Copy-XwfItemToContainer`,
+  `Add-XwfComment`, `Read-XwfContent`, and `Dismount-XwfVolume`: create
+  `xwf-api-bridge-request/v1` objects or append JSONL requests for an in-process
+  X-Tension bridge.
 
 Use this module before any X-Ways query, export, recover, or copy step. It is
 not an MCP tool by itself; it is a repeatable local runner helper for forensic
@@ -242,6 +253,7 @@ soundness.
 
 See `docs/EXTERNAL_SURFACE_ANALYSIS.md` for the XWF 21.8 x64 baseline and
 examples.
+See `docs/XWF_API_CMDLETS.md` for the generated XWF API bridge-request cmdlets.
 
 ## harness_init_case
 

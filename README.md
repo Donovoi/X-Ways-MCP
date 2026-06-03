@@ -32,6 +32,8 @@ specific in-process gap and document the API provenance for future runs.
 - Generate local X-Tension bridge scaffolds with API notes and build hooks.
 - Inventory X-Ways executable imports, delay imports, `XWF_*` exports, and
   `XWF_*`/`XT_*` string clues with documented PowerShell cmdlets.
+- Expose the 77 verified `XWF_*` exports as agent-facing PowerShell cmdlets
+  that create validated JSONL requests for an in-process X-Tension bridge.
 - Plan parallel X-Ways processing from the local manual: native distributed
   volume snapshot refinement first, isolated worker cases only as fallback.
 - Provide a reusable PowerShell guardrail module for container-first exports,
@@ -156,6 +158,20 @@ Compare-XwfExternalSurface `
 The comparison writes Markdown, JSON, and CSV artifacts for imports, delay
 imports, exports, API-like strings, and undocumented-looking string candidates.
 
+Create validated XWF API bridge requests with the generated PowerShell cmdlets:
+
+```powershell
+Import-Module .\powershell\XWaysForensicWorkflow\XWaysForensicWorkflow.psd1 -Force
+Get-XwfItemName -Argument @{ nItemID = 42 }
+Add-XwfComment `
+  -Argument @{ nItemID = 42; lpComment = 'Reviewed'; nFlagsHowToAdd = 0 } `
+  -OutboxPath ".\case-workspaces\CASE-001\xwf-api-requests.jsonl" `
+  -AllowMutating
+```
+
+These cmdlets do not call X-Ways exports directly from PowerShell. They produce
+`xwf-api-bridge-request/v1` objects for an in-process X-Tension bridge.
+
 Build disposable synthetic fixtures for every supported evidence OS:
 
 ```powershell
@@ -227,6 +243,8 @@ See [docs/XTENSION_BRIDGE.md](docs/XTENSION_BRIDGE.md) for the generated
 X-Tension bridge workflow.
 See [docs/EXTERNAL_SURFACE_ANALYSIS.md](docs/EXTERNAL_SURFACE_ANALYSIS.md) for
 PE import/export/string analysis and the XWF 21.8 x64 baseline.
+See [docs/XWF_API_CMDLETS.md](docs/XWF_API_CMDLETS.md) for the generated
+PowerShell wrappers over the verified `XWF_*` exports.
 See [docs/FORENSIC_SOUNDNESS.md](docs/FORENSIC_SOUNDNESS.md) for the
 container-first export policy and reusable PowerShell module.
 See [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) for the public
