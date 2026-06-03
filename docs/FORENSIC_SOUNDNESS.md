@@ -108,6 +108,13 @@ own. If the same parser is used on evidence-derived files, the input must be a
 container or container-derived copy and the run notes must record the source
 container, hashes, parser command, and output paths.
 
+Generated XWF API cmdlets such as `Get-XwfItemName`, `Add-XwfComment`, and
+`Read-XwfContent` only create bridge requests. The eventual X-Tension bridge
+must still enforce this policy in-process. Mutating requests require an explicit
+`-AllowMutating` opt-in, and content-reading requests require
+`-AllowContentAccess` after the query-first/container-first boundary is
+documented.
+
 The module writes JSONL and Markdown contemporaneous notes under the run
 workspace. Detailed case facts stay local.
 

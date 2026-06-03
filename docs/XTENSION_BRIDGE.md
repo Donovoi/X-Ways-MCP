@@ -67,6 +67,28 @@ must record:
 
 Treat undocumented behavior as version-bound. Do not generalize it silently.
 
+## XWF API Request Cmdlets
+
+`powershell/XWaysForensicWorkflow` exposes the verified `XWF_*` exports as
+PowerShell bridge-request cmdlets. The cmdlets are intentionally not an FFI
+layer. They validate the requested native function against the local export
+catalog and then return or append a JSONL request with schema
+`xwf-api-bridge-request/v1`.
+
+Required bridge request fields:
+
+- `request_id`
+- `api_name`, preserving the exact native export such as `XWF_GetItemName`
+- `cmdlet_name`, such as `Get-XwfItemName`
+- `ordinal`, `rva`, and `signature`
+- `risk_level`, `mutates_case`, and `reads_content`
+- `case_id`, `purpose`, and `arguments`
+
+Generated cmdlets block mutating APIs unless `-AllowMutating` is present and
+block content-reading APIs unless `-AllowContentAccess` is present. A bridge DLL
+that consumes this JSONL must still enforce its own allowlist and write result
+records keyed by `request_id`.
+
 ## Output Policy
 
 X-Tensions must write evidence-derived output to the approved local case

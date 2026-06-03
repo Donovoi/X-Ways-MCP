@@ -100,6 +100,14 @@ The output directory receives:
 - `xwf-exports.csv`
 - `xwf-api-strings.csv`
 
+## Generated API Cmdlets
+
+The verified export table also drives `data/xwf-external-surface/xwf-21.8-exported-api-cmdlets.csv`
+and the generated PowerShell wrappers documented in
+`docs/XWF_API_CMDLETS.md`. Only functions exported by the executable are exposed
+as bridge-request cmdlets; documented-but-missing functions remain reference
+data only.
+
 ## Forensic Boundary
 
 Use these cmdlets against the X-Ways program files you own or against
