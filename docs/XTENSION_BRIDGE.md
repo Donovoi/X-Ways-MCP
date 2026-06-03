@@ -57,7 +57,10 @@ If a runner uses undocumented or locally researched API behavior, `API_NOTES.md`
 must record:
 
 - X-Ways executable name and version
+- executable SHA-256 and the `Compare-XwfExternalSurface` artifact path, when
+  available
 - where the symbol or behavior was found
+- whether the name is exported, documented, or only present as a string
 - expected calling convention and argument ownership
 - failure behavior
 - why no documented/headless route was sufficient

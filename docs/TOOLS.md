@@ -221,10 +221,27 @@ that need X-Ways output:
   X-Ways.
 - `New-XwfUsagePatternPlan`: writes a parallel analysis plan that reads from
   containers or container-derived copies only.
+- `Get-XwfPortableExecutable`: discovers X-Ways-family executables and records
+  read-only identity metadata, SHA-256, version fields, and PE architecture.
+- `Get-XwfPeExternalFunction`: parses normal imports and delay imports from a
+  PE file without loading or executing it.
+- `Get-XwfPeExport`: parses PE exports, including callable `XWF_*` functions
+  from X-Ways/WinHex binaries.
+- `Get-XwfApiString`: scans ASCII and UTF-16LE strings for `XWF_*` and `XT_*`
+  API-looking names.
+- `Compare-XwfExternalSurface`: compares a local X-Ways executable with the
+  committed documented XWF/XT reference data and reports imports, exports,
+  callback strings, missing documented exports, and undocumented-looking string
+  candidates.
+- `Export-XwfExternalSurfaceReport`: writes the comparison as Markdown, JSON,
+  import CSV, export CSV, and API-string CSV artifacts.
 
 Use this module before any X-Ways query, export, recover, or copy step. It is
 not an MCP tool by itself; it is a repeatable local runner helper for forensic
 soundness.
+
+See `docs/EXTERNAL_SURFACE_ANALYSIS.md` for the XWF 21.8 x64 baseline and
+examples.
 
 ## harness_init_case
 
